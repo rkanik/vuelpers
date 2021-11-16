@@ -1,0 +1,1 @@
+export declare type jsonParse = (input: string) => [isError: boolean, parsed: any];
