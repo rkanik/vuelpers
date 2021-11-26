@@ -2,6 +2,147 @@ import _ from 'lodash'
 
 export { _ }
 
+interface PasswordType {
+	length: number
+	chars: boolean
+	symbols: boolean
+	numbers: boolean
+}
+
+/**
+ *
+ * @param {number} time - How much time have to sleep
+ * @param {string} unit - Unit of time ['s'-seconds,'m'-minute,'h'-houre]
+ */
+export const sleep = (time: number, unit: 'sec' | 'min' | 'hr') => new Promise((resolve) => {
+	const ms = unit === 'sec'
+		? time * 1000 : unit === 'min'
+			? time * 60 * 1000 : unit === 'hr'
+				? time * 60 * 60 * 1000 : time;
+	setTimeout(() => resolve(''), ms);
+});
+
+export const miniId = (len: number = 5) => {
+	return Math.random()
+		.toString(36).slice(len <= 10 ? -len : -10)
+}
+
+export const generatePassword = (config: Partial<PasswordType> = {}) => {
+	let defaultType: PasswordType = {
+		length: 8,
+		chars: true,
+		numbers: true,
+		symbols: false,
+		...config
+	}
+	const
+		numbers = '0123456789',
+		symbols = "!@#$%^&*()_+><{};:.,",
+		chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+	let password = '', sourceString = ''
+
+	if (defaultType.chars) sourceString += chars
+	if (defaultType.numbers) sourceString += numbers
+	if (defaultType.symbols) sourceString += symbols
+
+	for (var i = 0, n = sourceString.length; i < defaultType.length; ++i) {
+		password += sourceString.charAt(Math.floor(Math.random() * n));
+	}
+	return password;
+}
+
+export const getPairs = (array: any[], length: number = 2) => {
+	let start = 0, pairs: any = []
+	while (start < (array.length - 1)) {
+		pairs = pairs.concat(
+			[[...Array(length)].map(
+				(_, index) => array[start + index]
+			)]
+		)
+		start += 1
+	}
+	return pairs
+}
+
+export const stringReplace = (
+	string: string,
+	start: number,
+	replacement: string,
+	end: number = string.length
+) => {
+	return (
+		string.substring(0, start) +
+		replacement +
+		string.substring(end)
+	)
+}
+
+export const isEmpty = (v: any) => {
+	if ([undefined, null, ''].includes(v)) return true
+	if (_.isArray(v) && !v.length) return true
+	if (_.isPlainObject(v) && !Object.keys(v).length) return true
+	return false
+}
+
+/** Encode string to base64 */
+export const encodeString = (str: any) => {
+	const _unescape = window.unescape || window.decodeURI
+	return window.btoa(_unescape(encodeURIComponent(str)))
+}
+
+/** Decode base64 to string */
+export const decodeString = (encoded: any) => {
+	const _escape = window.escape || window.encodeURI
+	return decodeURIComponent(_escape(window.atob(encoded)))
+}
+
+export const encodedLS = {
+	getItem(key: string): any {
+		let data = localStorage.getItem(key)
+		if (!data) return null
+
+		const [error, parsed] = jsonParse(decodeString(data))
+		if (!error) return parsed
+
+		return secureDataType(data)
+	},
+	setItem(key: string, value: string) {
+		localStorage.setItem(
+			key, encodeString(JSON.stringify(value))
+		)
+	},
+	removeItem(key: string) {
+		localStorage.removeItem(key)
+	},
+}
+
+export const hasHistory = (): boolean => {
+	return window.history.length > 2
+}
+
+export const partialObject = (object: any, ...keys: string[]): { [key: string]: any } => {
+	return keys.reduce((data: any, key: any) => {
+		if (!key) return data
+		const splitted = key.split('.')
+		if (_.has(object, key)) data[key] = object[key]
+		else if (splitted.length > 1 && _.has(object, splitted[0])) {
+			data[splitted[0]] = partialObject(
+				object[splitted[0]],
+				splitted.slice(1).join('.').split(',')
+			)
+		}
+		return data
+	}, {})
+}
+
+export const changeLocationQuery = (query: string) => {
+	if (window.history.pushState) {
+		const newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + query
+		window.history.pushState({ path: newurl }, '', newurl)
+	}
+}
+
 export const getCurrentCountry = (): Promise<[country: { code: string, name: string } | null, error: any]> => {
 	return new Promise((resolve) => {
 		return fetch("https://ip2c.org/s")
@@ -76,4 +217,25 @@ export const convertKeysToCamelCase = (data: any): any => {
 			return { ...converted, [key]: nested(value) }
 		}, {})
 	return data
+}
+
+export const toFormData = (value: any, extra: object = {}) => {
+	const data = { ...convertKeysToSnakeCase(value), ...extra }
+	const formData = new FormData()
+
+	const traverse = (value: any, key?: any) => {
+		if (_.isArray(value)) {
+			value.forEach((v: any, index) => {
+				traverse(v, key ? `${key}[${index}]` : index)
+			})
+		} else if (_.isPlainObject(value)) {
+			Object.entries(value).forEach(([p, v]: any[]) => {
+				traverse(v, key ? `${key}[${p}]` : p)
+			})
+		} else {
+			formData.append(key, value)
+		}
+	}
+	traverse(data)
+	return formData
 }
