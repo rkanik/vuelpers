@@ -2,7 +2,20 @@ import _ from 'lodash'
 
 export { _ }
 
-export const jsonParse = (input: string) => {
+export const getCurrentCountry = (): Promise<[country: { code: string, name: string } | null, error: any]> => {
+	return new Promise((resolve) => {
+		return fetch("https://ip2c.org/s")
+			.then((res) => res.text())
+			.then((response) => {
+				let result = (response || "").toString();
+				if (!result || result[0] !== "1") return resolve([null, { message: 'Error while fetching country' }]);
+				return resolve([{ code: result.substring(2, 4), name: result.substring(9) }, null]);
+			})
+			.catch((err) => resolve([err, null]))
+	})
+}
+
+export const jsonParse = (input: string): [error: boolean, parsed: any] => {
 	try {
 		const parsed = JSON.parse(input)
 		return [false, parsed]
