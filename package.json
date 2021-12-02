@@ -1,6 +1,6 @@
 {
   "name": "vuelpers",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "Common javascript helpers methods for vue developers",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -22,6 +22,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "lodash": "^4.17.21"
   },
   "directories": {
