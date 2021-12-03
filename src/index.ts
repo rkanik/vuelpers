@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
 export { _ }
 
@@ -300,9 +300,23 @@ const handler = (requestPromise: Promise<any>) => {
 	})
 }
 
+type AxiosMiddleware = (config: AxiosRequestConfig<any>) => AxiosRequestConfig<any>
 export const createAPI = (config: { baseURL: string }) => {
 	const api = axios.create({ baseURL: config.baseURL })
+	let middlewares: AxiosMiddleware[] = []
+
+	api.interceptors.request.use((config) => {
+		for (let middleware of middlewares) {
+			config = { ...middleware(config) }
+		}
+		return config
+	})
+
 	return {
+		use(middleware: AxiosMiddleware) {
+			middlewares.push(middleware)
+			return this
+		},
 		setHeaders(headers: object) {
 			api.defaults.headers.common = {
 				...api.defaults.headers.common,
@@ -370,11 +384,11 @@ const mutations: any = {
 		mutations.SET(state, initialState)
 	},
 	PUSH(state: any, payload: any) {
-		if (Array.isArray(payload)) {
+		if (_.isArray(payload)) {
 			let [path, ...items] = payload
 			let target = _.get(state, path)
 
-			if (!target || !Array.isArray(target)) {
+			if (!target || !_.isArray(target)) {
 				throw Error('Specified state path not found or property is not an array')
 			}
 
@@ -384,22 +398,22 @@ const mutations: any = {
 			Object.entries(payload).forEach(([path, item]) => {
 				let target = _.get(state, path)
 
-				if (!target || !Array.isArray(target)) {
+				if (!target || !_.isArray(target)) {
 					throw Error('Specified state path not found or property is not an array')
 				}
 
-				let items = Array.isArray(item) ? item : [item]
+				let items = _.isArray(item) ? item : [item]
 				target.push(...items)
 			})
 		}
 		else throw Error('Invalid payload type.')
 	},
 	UNSHIFT(state: any, payload: any) {
-		if (Array.isArray(payload)) {
+		if (_.isArray(payload)) {
 			let [path, ...items] = payload
 			let target = _.get(state, path)
 
-			if (!target || !Array.isArray(target)) {
+			if (!target || !_.isArray(target)) {
 				throw Error('Specified state path not found or property is not an array')
 			}
 
@@ -409,11 +423,11 @@ const mutations: any = {
 			Object.entries(payload).forEach(([path, item]) => {
 				let target = _.get(state, path)
 
-				if (!target || !Array.isArray(target)) {
+				if (!target || !_.isArray(target)) {
 					throw Error('Specified state path not found or property is not an array')
 				}
 
-				let items = Array.isArray(item) ? item : [item]
+				let items = _.isArray(item) ? item : [item]
 				target.unshift(...items)
 			})
 		}
@@ -422,7 +436,7 @@ const mutations: any = {
 	CONCAT(state: any, [path, items]: any) {
 		let target = _.get(state, path)
 
-		if (!target || !Array.isArray(target)) {
+		if (!target || !_.isArray(target)) {
 			throw Error('Specified state path not found or property is not an array')
 		}
 
@@ -431,11 +445,11 @@ const mutations: any = {
 	DELETE(state: any, [path, key, match = 'id']: any) {
 		let target = _.get(state, path)
 
-		if (!target || !Array.isArray(target)) {
+		if (!target || !_.isArray(target)) {
 			throw Error('Specified state path not found or property is not an array')
 		}
 
-		let keys = Array.isArray(key) ? key : [key]
+		let keys = _.isArray(key) ? key : [key]
 		_.set(state, path, _.get(state, path).filter(
 			(el: any) => !keys.includes(el[match])
 		))
@@ -443,7 +457,7 @@ const mutations: any = {
 	UPDATE(state: any, [path, data, match = 'id']: any) {
 		let target = _.get(state, path)
 
-		if (!target || !Array.isArray(target)) {
+		if (!target || !_.isArray(target)) {
 			throw Error('Specified state path not found or property is not an array')
 		}
 
@@ -454,7 +468,7 @@ const mutations: any = {
 	MERGE(state: any, [path, items, match = 'id']: any) {
 		let target = _.get(state, path)
 
-		if (!target || !Array.isArray(target)) {
+		if (!target || !_.isArray(target)) {
 			throw Error('Specified state path not found or property is not an array')
 		}
 
@@ -474,15 +488,15 @@ export const createMutations = (...types: any[]) => {
 		.reduce((m, a) => ({ ...m, [a]: mutations[a] }), {})
 };
 
-export const createGetters = (...getters: any[]) => {
-	return getters.reduce((getters, name) => {
+export const createGetters = (...getters: string[]) => {
+	return getters.reduce((gettersObj: { [key: string]: any }, name: string) => {
 		if (typeof name === 'string') {
-			getters[`$${name}`] = (state: any) => state[name]
+			gettersObj[`$${name}`] = (state: any) => state[name]
 		}
 		if (_.isPlainObject(name)) Object.entries(name).forEach(([key, path]: any[]) => {
-			getters[`$${key}`] = (state: any) => _.get(state, path)
+			gettersObj[`$${key}`] = (state: any) => _.get(state, path)
 		})
-		return getters
+		return gettersObj
 	}, {})
 }
 

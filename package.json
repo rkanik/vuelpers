@@ -1,14 +1,13 @@
 {
   "name": "vuelpers",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Common javascript helpers methods for vue developers",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "node ./scripts/build.js",
     "start": "node ./lib --NODE_ENV prod",
-    "dev": "nodemon --config nodemon.json",
-    "publish": "yarn build && npm publish"
+    "dev": "nodemon --config nodemon.json"
   },
   "author": "RK Anik",
   "license": "ISC",
