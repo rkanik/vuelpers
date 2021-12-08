@@ -1,6 +1,7 @@
 node_modules
 scripts
 src
+examples
 nodemon.json
 tsconfig.json
 tsconfig.prod.json

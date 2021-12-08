@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "module": "es6",
+    "module": "commonjs",
     "outDir": "lib",
     "removeComments": true,
     "sourceMap": true,

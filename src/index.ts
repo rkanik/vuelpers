@@ -1,8 +1,6 @@
 import _ from 'lodash'
 import axios, { AxiosRequestConfig } from 'axios'
 
-export { _ }
-
 interface PasswordType {
 	length: number
 	chars: boolean
@@ -510,3 +508,5 @@ export const handleAction = (apiRequestPromise: Promise<any>, successCallback: a
 			})
 	})
 }
+
+export { _ }
