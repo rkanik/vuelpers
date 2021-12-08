@@ -260,7 +260,7 @@ const toError = (error: any) => {
 	if (error.response) {
 		const res = error.response
 		data = {
-			...data,
+			...res,
 			statusCode: res.status,
 			statusText: res.statusText || res.data.status,
 		}
