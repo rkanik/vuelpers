@@ -1,16 +1,35 @@
 <template>
-  <hello-world />
+	<v-container>
+		<p>Country: {{country}}</p>
+
+		<p>isLoading: {{$isLoading}}</p>
+
+		{{stringReplace('Hello World', 6, 'Anik', 7)}}
+	</v-container>
 </template>
 
 <script lang="ts">
-  import Vue from 'vue'
-  import HelloWorld from '../components/HelloWorld.vue'
+/* eslint-disable */
+import Vue from "vue";
+import { mapGetters } from "vuex";
+import { stringReplace, getCurrentCountry } from "../../../lib";
+export default Vue.extend({
+	name: "Home",
+	components: {},
+	data: (): any => ({
+		country: null,
+	}),
+	computed: {
+		...mapGetters(["$isLoading"]),
+	},
+	async created() {
+		this.$store.dispatch("fetchTodos");
 
-  export default Vue.extend({
-    name: 'Home',
-
-    components: {
-      HelloWorld,
-    },
-  })
+		let [country] = await getCurrentCountry();
+		if (country) this.country = country;
+	},
+	methods: {
+		stringReplace,
+	},
+});
 </script>
