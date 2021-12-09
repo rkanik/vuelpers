@@ -1,19 +1,8 @@
 import _ from 'lodash'
 import { secureDataType } from './index'
 
-export const partialObject = (object: any, ...keys: string[]): { [key: string]: any } => {
-	return keys.reduce((data: any, key: any) => {
-		if (!key) return data
-		const splitted = key.split('.')
-		if (_.has(object, key)) data[key] = object[key]
-		else if (splitted.length > 1 && _.has(object, splitted[0])) {
-			data[splitted[0]] = partialObject(
-				object[splitted[0]],
-				splitted.slice(1).join('.').split(',')
-			)
-		}
-		return data
-	}, {})
+export const partialObject = (object: object, ...keys: string[]) => {
+	return _.pick(object, ...keys)
 }
 
 export const convertKeysToSnakeCase = (data: any): any => {

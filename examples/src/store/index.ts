@@ -22,7 +22,6 @@ export default new Vuex.Store({
     },
     async fetchTodos({ commit }) {
       commit(SET, { isLoading: true })
-
       return handleAction(api.fetchTodos(), (res: any) => {
         console.log('fetchTodos', res)
         commit(SET, { isLoading: false })
