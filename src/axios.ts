@@ -17,30 +17,33 @@ const toSuccess = (res: any) => {
 }
 
 const toError = (error: any) => {
-	let data: any = {}
-	if (error.response) {
-		const res = error.response
-		data = {
-			...res,
-			statusCode: res.status,
-			statusText: res.statusText || res.data.status,
+	try {
+		let data: any = {}
+		if (error.response) {
+			const res = error.response
+			data = {
+				...res,
+				statusCode: res.status,
+				statusText: res.statusText || res.data.status,
+			}
+			if (res.data.errors) data.errors = Object
+				.entries(res.data.errors)
+				.reduce((acc, [key, value]) => ({
+					...acc, [key]: value
+				}), {})
+			data.message = res.data.message || res.message
+			data.ref = error.response
 		}
-		if (res.data.errors) data.errors = Object
-			.entries(res.data.errors)
-			.reduce((acc, [key, value]) => ({
-				...acc, [key]: value
-			}), {})
-		data.message = res.data.message || res.message
-		data.ref = error.response
+		else {
+			data.statusCode = error.status
+			data.statusText = error.statusText
+			data.message = error.data.message
+			if (error.data.errors) data.errors = error.data.errors
+		}
+		data.message = data.message || error.message
+		return data
 	}
-	else {
-		data.statusCode = error.status
-		data.statusText = error.statusText
-		data.message = error.data.message
-		if (error.data.errors) data.errors = error.data.errors
-	}
-	data.message = data.message || error.message
-	return data
+	catch (_) { return error }
 }
 
 const handler = (requestPromise: Promise<any>) => {

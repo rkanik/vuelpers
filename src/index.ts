@@ -3,7 +3,8 @@ import { TIME } from './consts'
 import { createAPI } from './axios'
 import { stringReplace, decodeString, encodeString } from './strings'
 import { createGetters, createMutations, handleAction } from './vuex'
-import { partialObject, convertKeysToCamelCase, convertKeysToSnakeCase } from './objects'
+import { convertKeysToCamelCase, convertKeysToSnakeCase } from './objects'
+import { partialObject, isEmpty } from './legacy'
 
 interface PasswordType {
 	length: number
@@ -67,8 +68,6 @@ export const getPairs = (array: any[], length: number = 2) => {
 	}
 	return pairs
 }
-
-export const isEmpty = (v: any) => _.isEmpty(v)
 
 export const encodedLS = {
 	getItem(key: string): any {
@@ -171,6 +170,8 @@ export {
 	_,
 	// const
 	TIME,
+	//Any
+	isEmpty,
 	// strings
 	stringReplace,
 	encodeString,

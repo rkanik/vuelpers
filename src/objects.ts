@@ -1,8 +1,6 @@
 import _ from 'lodash'
 import { secureDataType } from './index'
 
-export const partialObject = _.pick
-
 export const convertKeysToSnakeCase = (data: any): any => {
 	const nested = (b: any) => {
 		return (_.isArray(b) || _.isPlainObject(b))
