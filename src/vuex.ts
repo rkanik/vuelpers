@@ -131,7 +131,8 @@ export const createGetters = (...getters: string[]) => {
 			gettersObj[`$${name}`] = (state: any) => state[name]
 		}
 		if (_.isPlainObject(name)) Object.entries(name).forEach(([key, path]: any[]) => {
-			gettersObj[`$${key}`] = (state: any) => _.get(state, path)
+			gettersObj[`$${key}`] = _.isFunction(path)
+				? path : (state: any) => _.get(state, path)
 		})
 		return gettersObj
 	}, {})
