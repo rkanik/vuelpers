@@ -25,8 +25,8 @@ export default Vue.extend({
 	async created() {
 		this.$store.dispatch("fetchTodos");
 
-		let [country] = await getCurrentCountry();
-		if (country) this.country = country;
+		// let [country] = await getCurrentCountry();
+		// if (country) this.country = country;
 	},
 	methods: {
 		stringReplace,
