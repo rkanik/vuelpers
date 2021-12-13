@@ -3,7 +3,7 @@ import { TIME } from './consts'
 import { createAPI } from './axios'
 import { stringReplace, decodeString, encodeString } from './strings'
 import { createGetters, createMutations, handleAction } from './vuex'
-import { convertKeysToCamelCase, convertKeysToSnakeCase } from './objects'
+import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 import { partialObject, isEmpty } from './legacy'
 
 interface PasswordType {
@@ -177,6 +177,7 @@ export {
 	encodeString,
 	decodeString,
 	// objects
+	omitEmpties,
 	partialObject,
 	convertKeysToCamelCase,
 	convertKeysToSnakeCase,
