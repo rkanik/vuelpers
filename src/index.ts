@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { TIME } from './consts'
 import { createAPI } from './axios'
+import { getPercentage } from './numbers'
 import { stringReplace, decodeString, encodeString } from './strings'
 import { createGetters, createMutations, handleAction } from './vuex'
 import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
@@ -187,4 +188,6 @@ export {
 	createMutations,
 	// axios
 	createAPI,
+	// numbers
+	getPercentage
 }
