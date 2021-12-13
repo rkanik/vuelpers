@@ -6,6 +6,7 @@ import { stringReplace, decodeString, encodeString } from './strings'
 import { createGetters, createMutations, handleAction } from './vuex'
 import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 import { partialObject, isEmpty } from './legacy'
+import { encodedCookies } from './cookies'
 
 interface PasswordType {
 	length: number
@@ -189,5 +190,7 @@ export {
 	// axios
 	createAPI,
 	// numbers
-	getPercentage
+	getPercentage,
+	// Cookies
+	encodedCookies
 }
