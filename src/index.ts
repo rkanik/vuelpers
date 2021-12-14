@@ -7,6 +7,7 @@ import { createGetters, createMutations, handleAction } from './vuex'
 import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 import { partialObject, isEmpty } from './legacy'
 import { encodedCookies } from './cookies'
+import { queryString } from './query-string'
 
 interface PasswordType {
 	length: number
@@ -175,6 +176,7 @@ export {
 	//Any
 	isEmpty,
 	// strings
+	queryString,
 	stringReplace,
 	encodeString,
 	decodeString,
