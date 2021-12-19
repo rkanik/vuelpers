@@ -1,5 +1,10 @@
 import _ from 'lodash'
 
+export type Mutation<S> = (state: S, payload?: any) => any;
+export interface MutationTree<S> {
+  [key: string]: Mutation<S>;
+}
+
 type MutationType = 'SET' | 'PUSH' | 'RESET' | 'UNSHIFT' | 'UPDATE' | 'DELETE' | 'MERGE' | 'CONCAT'
 const SET = 'SET', PUSH = 'PUSH', RESET = 'RESET', UNSHIFT = 'UNSHIFT', UPDATE = 'UPDATE', DELETE = 'DELETE', MERGE = 'MERGE', CONCAT = 'CONCAT'
 
@@ -117,12 +122,14 @@ const mutations = {
 	}
 }
 
-export const createMutations = (...types: MutationType[]) => {
+export const createMutations = <S>(...types: MutationType[]): MutationTree<S> => {
 	if (!types.length) return { ...mutations }
 	return Object
 		.keys(mutations)
 		.filter((name) => types.includes(name as MutationType))
-		.reduce((m: Partial<typeof mutations>, a: any) => ({ ...m, [a]: mutations[a as MutationType] }), {})
+		.reduce((m: Partial<typeof mutations>, a: any) => {
+			return { ...m, [a]: mutations[a as MutationType] }
+		}, {})
 };
 
 export const createGetters = (...getters: string[]) => {
