@@ -1,8 +1,32 @@
 import _ from 'lodash'
+import camelCase from 'lodash/camelCase'
 
-export type Mutation<S> = (state: S, payload?: any) => any;
-export interface MutationTree<S> {
-  [key: string]: Mutation<S>;
+type Mutation<S> = (state: S, payload?: any) => any;
+interface MutationTree<S> {
+	[key: string]: Mutation<S>;
+}
+
+interface ModuleTree<R> {
+	[key: string]: any;
+}
+
+/**
+ * @example
+ * importModules(
+ *    require.context(
+ *       "./modules", false, /\.store\.(js|ts)$/
+ *    )
+ * )
+ * 
+ * @param context - Require context
+ */
+export const importModules = <R>(context: any): ModuleTree<R> => {
+	const modules: { [k: string]: any } = {};
+	context.keys().forEach((filename: string) => {
+		const moduleName = camelCase(filename.replace(/(\.\/|\.store\.(js|ts))/g, ""))
+		modules[moduleName] = context(filename).default || context(filename)
+	})
+	return modules
 }
 
 type MutationType = 'SET' | 'PUSH' | 'RESET' | 'UNSHIFT' | 'UPDATE' | 'DELETE' | 'MERGE' | 'CONCAT'

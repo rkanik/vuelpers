@@ -3,11 +3,12 @@ import { TIME } from './consts'
 import { createAPI } from './axios'
 import { getPercentage } from './numbers'
 import { stringReplace, decodeString, encodeString } from './strings'
-import { createGetters, createMutations, handleAction } from './vuex'
+import { importModules, createGetters, createMutations, handleAction } from './vuex'
 import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 import { partialObject, isEmpty } from './legacy'
 import { encodedCookies } from './cookies'
 import { queryString } from './query-string'
+import { registerComponents } from './vue'
 
 interface PasswordType {
 	length: number
@@ -189,10 +190,13 @@ export {
 	handleAction,
 	createGetters,
 	createMutations,
+	importModules,
 	// axios
 	createAPI,
 	// numbers
 	getPercentage,
 	// Cookies
-	encodedCookies
+	encodedCookies,
+	// Vue
+	registerComponents
 }

@@ -5,12 +5,20 @@ import { encodedCookies } from "../../../lib";
 import { sleep } from "../../../lib";
 import {
   SET,
+  importModules,
   handleAction,
   createGetters,
   createMutations,
 } from "../../../lib/vuex";
 
 Vue.use(Vuex)
+
+const modules = importModules(
+  require.context(
+    "./modules", true,
+    /\.store\.(js|ts)$/
+  )
+)
 
 export default new Vuex.Store({
   state: {
@@ -43,7 +51,6 @@ export default new Vuex.Store({
       })
     }
   },
-  modules: {
-  },
+  modules,
   plugins: [createLogger()]
 })

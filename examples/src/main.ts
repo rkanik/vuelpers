@@ -4,8 +4,21 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import { registerComponents } from '../../lib'
 
 Vue.config.productionTip = false
+
+registerComponents(
+  require.context(
+    './components', true, // is deep
+    /[A-Z]\w+\.(vue|js|ts)$/
+  ), Vue
+)
+
+// console.log(require.context(
+//   './components', true, // is deep
+//   /[A-Z]\w+\.(vue|js|ts)$/
+// ).keys());
 
 new Vue({
   router,

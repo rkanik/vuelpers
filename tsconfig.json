@@ -7,7 +7,7 @@
     "importHelpers": true,
     "module": "commonjs",
     "outDir": "lib",
-    "removeComments": true,
+    "removeComments": false,
     "sourceMap": true,
     "strict": true,
     "target": "ES6",
