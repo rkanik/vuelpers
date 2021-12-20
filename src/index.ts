@@ -176,6 +176,29 @@ export const isMobile = () => {
 	return check;
 }
 
+export const calculateBreakpoint = (width: number, config = {}) => {
+	const { } = config
+	return {
+		// EXACT
+		xs: eval(`${width} < 640`),
+		sm: eval(`${width} >= 640 && ${width} < 768`),
+		md: eval(`${width} >= 768 && ${width} < 1024`),
+		lg: eval(`${width} >= 1024 && ${width} < 1280`),
+		xl: eval(`${width} >= 1280 && ${width} < 1536`),
+		'2xl': eval(`${width} >= 1536`),
+		// DOWN
+		smAndDown: eval(`${width} < 768`),
+		mdAndDown: eval(`${width} < 1024`),
+		lgAndDown: eval(`${width} < 1280`),
+		xlAndDown: eval(`${width} < 1536`),
+		// UP
+		smAndUp: eval(`${width} >= 640`),
+		mdAndUp: eval(`${width} >= 768`),
+		lgAndUp: eval(`${width} >= 1024`),
+		xlAndUp: eval(`${width} >= 1536`),
+	}
+}
+
 export {
 	_,
 	// const
