@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios from 'axios'
+import { AxiosRequestConfig } from 'axios'
 import { has, isArray, isPlainObject } from 'lodash'
 import { convertKeysToCamelCase, convertKeysToSnakeCase } from './objects'
 

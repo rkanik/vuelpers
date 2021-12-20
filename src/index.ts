@@ -35,27 +35,21 @@ export const miniId = (len: number = 5) => {
 		.toString(36).slice(len <= 10 ? -len : -10)
 }
 
-interface PasswordType { length: number, chars: boolean, symbols: boolean, numbers: boolean }
-export const generatePassword = (config: Partial<PasswordType> = {}) => {
-	let defaultType: PasswordType = {
-		length: 8,
-		chars: true,
-		numbers: true,
-		symbols: false,
-		...config
-	}
+interface PasswordType { length?: number, chars?: boolean, symbols?: boolean, numbers?: boolean }
+export const generatePassword = (config: PasswordType = {}) => {
+	let { length = 8, chars = true, numbers = true, symbols = false }: PasswordType = config
 	const
-		numbers = '0123456789',
-		symbols = "!@#$%^&*()_+><{};:.,",
-		chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+		_numbers = '0123456789',
+		_symbols = "!@#$%^&*()_+><{};:.,",
+		_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 	let password = '', sourceString = ''
 
-	if (defaultType.chars) sourceString += chars
-	if (defaultType.numbers) sourceString += numbers
-	if (defaultType.symbols) sourceString += symbols
+	if (chars) sourceString += _chars
+	if (numbers) sourceString += _numbers
+	if (symbols) sourceString += _symbols
 
-	for (var i = 0, n = sourceString.length; i < defaultType.length; ++i) {
+	for (var i = 0, n = sourceString.length; i < length; ++i) {
 		password += sourceString.charAt(Math.floor(Math.random() * n));
 	}
 	return password;
