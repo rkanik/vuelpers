@@ -1,10 +1,10 @@
-import _ from 'lodash'
 import axios, { AxiosRequestConfig } from 'axios'
+import { has, isArray, isPlainObject } from 'lodash'
 import { convertKeysToCamelCase, convertKeysToSnakeCase } from './objects'
 
 const toSuccess = (res: any) => {
-	if (_.isPlainObject(res) && res.status === 'error') return toError(res)
-	let mRes = _.isArray(res) ? { data: res } : { ...res }
+	if (isPlainObject(res) && res.status === 'error') return toError(res)
+	let mRes = isArray(res) ? { data: res } : { ...res }
 	delete mRes.code
 	delete mRes.status
 	let data = {
@@ -90,7 +90,7 @@ export const createAPI = (config: { baseURL: string }) => {
 		},
 		removeHeaders(...headers: string[]) {
 			for (let key of headers) {
-				if (_.has(api.defaults.headers.common, key)) {
+				if (has(api.defaults.headers.common, key)) {
 					delete api.defaults.headers.common[key]
 				}
 			}
