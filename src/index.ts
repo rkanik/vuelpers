@@ -5,7 +5,7 @@ import { getPercentage } from './numbers'
 import { stringReplace, decodeString, encodeString } from './strings'
 import { importModules, createGetters, createMutations, handleAction } from './vuex'
 import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
-import { partialObject, isEmpty } from './legacy'
+import { partialObject } from './legacy'
 import { encodedCookies } from './cookies'
 import { queryString } from './query-string'
 import { registerComponents } from './vue'
@@ -29,6 +29,13 @@ export const sleep = (time: number = 1000, unit: 'ms' | 'sec' | 'min' | 'hr' = '
 				? time * 60 * 60 * 1000 : time;
 	setTimeout(() => resolve(''), ms);
 });
+
+export const isEmpty = (value: any) => {
+	if ([undefined, null, '',].includes(value)) return true
+	if (Array.isArray(value) && !value.length) return true
+	if (_.isPlainObject(value) && !Object.keys(value).length) return true
+	return false
+}
 
 export const miniId = (len: number = 5) => {
 	return Math.random()
@@ -204,7 +211,7 @@ export {
 	// const
 	TIME,
 	//Any
-	isEmpty,
+
 	// strings
 	queryString,
 	stringReplace,

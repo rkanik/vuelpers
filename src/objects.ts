@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { secureDataType } from './index'
+import { isEmpty, secureDataType } from './index'
 
 interface OmitEmptiesConfig {
 	ignore?: string[]
@@ -17,7 +17,7 @@ export const omitEmpties = (object: object, config: OmitEmptiesConfig = {}) => {
 				const currentPath = !path ? key : `${path}.${key}`
 
 				// If value is empty returning
-				if (_.isEmpty(value) && !ignore.includes(currentPath)) return data
+				if (isEmpty(value) && !ignore.includes(currentPath)) return data
 
 				// Keeping the value
 				if (!_.isPlainObject(value)) data[key] = value
