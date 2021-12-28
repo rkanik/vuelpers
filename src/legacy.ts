@@ -1,3 +1,3 @@
-import _ from 'lodash'
+import { pick } from 'lodash'
 
-export const partialObject = _.pick
+export const partialObject = pick

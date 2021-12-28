@@ -1,26 +1,19 @@
-import _ from 'lodash'
 import { TIME } from './consts'
 import { createAPI } from './axios'
 import { getPercentage } from './numbers'
-import { stringReplace, decodeString, encodeString } from './strings'
-import { importModules, createGetters, createMutations, handleAction } from './vuex'
-import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 import { partialObject } from './legacy'
 import { encodedCookies } from './cookies'
 import { queryString } from './query-string'
 import { registerComponents } from './vue'
-
-interface PasswordType {
-	length: number
-	chars: boolean
-	symbols: boolean
-	numbers: boolean
-}
+import { isString, isArray, isPlainObject } from 'lodash'
+import { stringReplace, decodeString, encodeString } from './strings'
+import { importModules, createGetters, createMutations, handleAction } from './vuex'
+import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 
 /**
  *
  * @param {number} time - How much time have to sleep
- * @param {string} unit - Unit of time ['s'-seconds,'m'-minute,'h'-houre]
+ * @param {string} unit - Unit of time ['sec'-seconds,'min'-minute,'hr'-hour]
  */
 export const sleep = (time: number = 1000, unit: 'ms' | 'sec' | 'min' | 'hr' = 'ms') => new Promise<any>((resolve) => {
 	const ms = unit === 'sec'
@@ -33,7 +26,7 @@ export const sleep = (time: number = 1000, unit: 'ms' | 'sec' | 'min' | 'hr' = '
 export const isEmpty = (value: any) => {
 	if ([undefined, null, '',].includes(value)) return true
 	if (Array.isArray(value) && !value.length) return true
-	if (_.isPlainObject(value) && !Object.keys(value).length) return true
+	if (isPlainObject(value) && !Object.keys(value).length) return true
 	return false
 }
 
@@ -42,6 +35,7 @@ export const miniId = (len: number = 5) => {
 		.toString(36).slice(len <= 10 ? -len : -10)
 }
 
+interface PasswordType { length: number, chars: boolean, symbols: boolean, numbers: boolean }
 export const generatePassword = (config: Partial<PasswordType> = {}) => {
 	let defaultType: PasswordType = {
 		length: 8,
@@ -135,7 +129,7 @@ export const jsonParse = (input: string): [error: boolean, parsed: any] => {
 export const secureDataType = (input: any) => {
 
 	// Non string
-	if (!_.isString(input)) return input
+	if (!isString(input)) return input
 
 	// Empty string
 	if (!input.length) return input
@@ -161,11 +155,11 @@ export const toFormData = (value: any, extra: object = {}) => {
 	const formData = new FormData()
 
 	const traverse = (value: any, key?: any) => {
-		if (_.isArray(value)) {
+		if (isArray(value)) {
 			value.forEach((v: any, index) => {
 				traverse(v, key ? `${key}[${index}]` : index)
 			})
-		} else if (_.isPlainObject(value)) {
+		} else if (isPlainObject(value)) {
 			Object.entries(value).forEach(([p, v]: any[]) => {
 				traverse(v, key ? `${key}[${p}]` : p)
 			})
@@ -183,31 +177,31 @@ export const isMobile = () => {
 	return check;
 }
 
-export const calculateBreakpoint = (width: number, config = {}) => {
-	const { } = config
+interface BreakpointsUp { sm?: number; md?: number; lg?: number; xl?: number; xxl?: number }
+export const calculateBreakpoint = (width: number, breakpoints: BreakpointsUp = {}) => {
+	const { sm = 640, md = 768, lg = 1024, xl = 1280, xxl = 1536 }: BreakpointsUp = breakpoints
 	return {
 		// EXACT
-		xs: eval(`${width} < 640`),
-		sm: eval(`${width} >= 640 && ${width} < 768`),
-		md: eval(`${width} >= 768 && ${width} < 1024`),
-		lg: eval(`${width} >= 1024 && ${width} < 1280`),
-		xl: eval(`${width} >= 1280 && ${width} < 1536`),
-		'2xl': eval(`${width} >= 1536`),
+		xs: eval(`${width} < ${sm}`) as boolean,
+		sm: eval(`${width} >= ${sm} && ${width} < ${md}`) as boolean,
+		md: eval(`${width} >= ${md} && ${width} < ${lg}`) as boolean,
+		lg: eval(`${width} >= ${lg} && ${width} < ${xl}`) as boolean,
+		xl: eval(`${width} >= ${xl} && ${width} < ${xxl}`) as boolean,
+		xxl: eval(`${width} >= ${xxl}`) as boolean,
 		// DOWN
-		smAndDown: eval(`${width} < 768`),
-		mdAndDown: eval(`${width} < 1024`),
-		lgAndDown: eval(`${width} < 1280`),
-		xlAndDown: eval(`${width} < 1536`),
+		smAndDown: eval(`${width} < ${md}`) as boolean,
+		mdAndDown: eval(`${width} < ${lg}`) as boolean,
+		lgAndDown: eval(`${width} < ${xl}`) as boolean,
+		xlAndDown: eval(`${width} < ${xxl}`) as boolean,
 		// UP
-		smAndUp: eval(`${width} >= 640`),
-		mdAndUp: eval(`${width} >= 768`),
-		lgAndUp: eval(`${width} >= 1024`),
-		xlAndUp: eval(`${width} >= 1536`),
+		smAndUp: eval(`${width} >= ${sm}`) as boolean,
+		mdAndUp: eval(`${width} >= ${md}`) as boolean,
+		lgAndUp: eval(`${width} >= ${lg}`) as boolean,
+		xlAndUp: eval(`${width} >= ${xxl}`) as boolean,
 	}
 }
 
 export {
-	_,
 	// const
 	TIME,
 	//Any

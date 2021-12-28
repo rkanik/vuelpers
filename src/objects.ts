@@ -1,5 +1,5 @@
-import _ from 'lodash'
 import { isEmpty, secureDataType } from './index'
+import { snakeCase, camelCase, isString, isArray, isPlainObject } from 'lodash'
 
 interface OmitEmptiesConfig {
 	ignore?: string[]
@@ -20,7 +20,7 @@ export const omitEmpties = (object: object, config: OmitEmptiesConfig = {}) => {
 				if (isEmpty(value) && !ignore.includes(currentPath)) return data
 
 				// Keeping the value
-				if (!_.isPlainObject(value)) data[key] = value
+				if (!isPlainObject(value)) data[key] = value
 
 				// if object then traversing again
 				else data[key] = traverse(value, currentPath)
@@ -38,12 +38,12 @@ export const omitEmpties = (object: object, config: OmitEmptiesConfig = {}) => {
 
 export const convertKeysToSnakeCase = (data: any): any => {
 	const nested = (b: any) => {
-		return (_.isArray(b) || _.isPlainObject(b))
+		return (isArray(b) || isPlainObject(b))
 			? convertKeysToSnakeCase(b) : b
 	}
-	if (_.isString(data)) return _.snakeCase(data)
-	if (_.isArray(data)) return data.map(nested)
-	if (_.isPlainObject(data)) return Object.entries(data)
+	if (isString(data)) return snakeCase(data)
+	if (isArray(data)) return data.map(nested)
+	if (isPlainObject(data)) return Object.entries(data)
 		.reduce((converted: any, [key, value]: any[]) => {
 			key = convertKeysToSnakeCase(key)
 			return { ...converted, [key]: nested(value) }
@@ -53,13 +53,13 @@ export const convertKeysToSnakeCase = (data: any): any => {
 
 export const convertKeysToCamelCase = (data: any): any => {
 	const nested = (b: any) => {
-		return (_.isArray(b) || _.isPlainObject(b))
+		return (isArray(b) || isPlainObject(b))
 			? convertKeysToCamelCase(b)
 			: secureDataType(b)
 	}
-	if (_.isString(data)) return _.camelCase(data)
-	if (_.isArray(data)) { return data.map(nested) }
-	if (_.isPlainObject(data)) return Object.entries(data)
+	if (isString(data)) return camelCase(data)
+	if (isArray(data)) { return data.map(nested) }
+	if (isPlainObject(data)) return Object.entries(data)
 		.reduce((converted: any, [key, value]: any[]) => {
 			key = convertKeysToCamelCase(key)
 			return { ...converted, [key]: nested(value) }

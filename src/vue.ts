@@ -1,6 +1,4 @@
-import camelCase from 'lodash/camelCase'
-import upperFirst from 'lodash/upperFirst'
-import isFunction from 'lodash/isFunction'
+import { camelCase, upperFirst, isFunction } from 'lodash'
 
 /**
  * @example
@@ -25,4 +23,3 @@ export const registerComponents = (context: any, Vue: any) => {
     Vue.component(componentName, component)
   });
 }
- 
