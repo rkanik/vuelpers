@@ -1,69 +1,10 @@
-import _ from 'lodash'
-import axios, { AxiosRequestConfig } from 'axios'
-import { convertKeysToCamelCase, convertKeysToSnakeCase } from './objects'
-import { queryString } from './query-string'
-
-const toSuccess = (res: any) => {
-  if (_.isPlainObject(res) && res.status === 'error') return toError(res)
-  let mRes = _.isArray(res) ? { data: res } : { ...res }
-  delete mRes.code
-  delete mRes.status
-  let data = {
-    ...mRes,
-    statusCode: res.code,
-    statusText: res.status,
-    message: res.message || 'Request succeeded'
-  }
-  return data
-}
-
-const toError = (error: any) => {
-  try {
-    let data: any = {}
-    if (error.response) {
-      const res = error.response
-      data = {
-        ...res,
-        statusCode: res.status,
-        statusText: res.statusText || res.data.status,
-      }
-      if (res.data.errors) data.errors = Object
-        .entries(res.data.errors)
-        .reduce((acc, [key, value]) => ({
-          ...acc, [key]: value
-        }), {})
-      data.message = res.data.message || res.message
-      data.ref = error.response
-    }
-    else {
-      data.statusCode = error.status
-      data.statusText = error.statusText
-      data.message = error.data.message
-      if (error.data.errors) data.errors = error.data.errors
-    }
-    data.message = data.message || error.message
-    return data
-  }
-  catch (_) { return error }
-}
-
-const handler = (requestPromise: Promise<any>) => {
-  return new Promise(resolve => {
-    requestPromise
-      .then(res => {
-        resolve([
-          null, convertKeysToCamelCase(
-            toSuccess(res.data)
-          )])
-      })
-      .catch(error => {
-        resolve([
-          convertKeysToCamelCase(
-            toError(error.response || error)
-          )])
-      })
-  })
-}
+import {
+  convertKeysToCamelCase,
+  convertKeysToSnakeCase
+} from './objects'
+import {
+  queryString
+} from './query-string'
 
 type Cases = 'camelCase' | 'snake_case'
 
@@ -72,8 +13,15 @@ type FetchAPIConfig = {
   apiCase?: Cases
 }
 
+type FetchResponse = {
+  status: number | 'net'
+  statusText: string
+  message?: string
+  [key: string]: any
+}
+
 export class FetchAPI {
-  private headers
+  private headers: any
   private baseURL: string
   private apiCase: Cases = 'snake_case'
   private init: RequestInit = {
@@ -87,104 +35,157 @@ export class FetchAPI {
     if (init) this.init = { ...this.init, ...init }
     if (config.apiCase) this.apiCase = config.apiCase
 
-    this.headers = new Headers()
-    this.headers.append('Accept', 'application/json');
+    this.headers = { 'Accept': 'application/json' }
   }
 
-  private getUrl(endpoint: string, query?: object | string) {
-    if (_.isString(query)) return `${this.baseURL}${endpoint}?${query}`
+  private getUrl(endpoint: string, query?: object) {
+    // If there is no query
+    if (!query) return `${this.baseURL}${endpoint}`
 
-    if (_.isObject(query)) {
-      return `${this.baseURL}${endpoint}?${queryString.stringify(query)}`
+    // converting query to snake case if api is in snake case
+    if (this.apiCase === 'snake_case') {
+      query = convertKeysToSnakeCase(query)
     }
-    return `${this.baseURL}${endpoint}`
+
+    // returning formatted url
+    return `${this.baseURL}${endpoint}?${queryString.stringify(query as object)}`
+
   }
 
-  private toSuccess(res: any) {
-    if (_.isPlainObject(res) && res.status === 'error') return toError(res)
-    let mRes = _.isArray(res) ? { data: res } : { ...res }
-    delete mRes.code
-    delete mRes.status
-    let data = {
-      ...mRes,
-      statusCode: res.code,
-      statusText: res.status,
-      message: res.message || 'Request succeeded'
-    }
-    return data
-  }
-
-  private toError(error: any) {
+  private parseText(text: string): [boolean, any] {
     try {
-      let data: any = {}
-      if (error.response) {
-        const res = error.response
-        data = {
-          ...res,
-          statusCode: res.status,
-          statusText: res.statusText || res.data.status,
-        }
-        if (res.data.errors) data.errors = Object
-          .entries(res.data.errors)
-          .reduce((acc, [key, value]) => ({
-            ...acc, [key]: value
-          }), {})
-        data.message = res.data.message || res.message
-        data.ref = error.response
-      }
-      else {
-        data.statusCode = error.status
-        data.statusText = error.statusText
-        data.message = error.data.message
-        if (error.data.errors) data.errors = error.data.errors
-      }
-      data.message = data.message || error.message
-      return data
+      const parsed = JSON.parse(text)
+      return [false, parsed]
     }
-    catch (_) { return error }
+    catch (_) { return [true, null] }
   }
 
-  private handleFetch(fetchPromise: Promise<Response>): Promise<[error: any, response: any]> {
-    return new Promise(resolve => {
-      fetchPromise
-        .then(raw => raw.json())
-        .then(res => {
-          const data = this.toSuccess(
-            this.apiCase === 'snake_case'
-              ? convertKeysToCamelCase(res)
-              : res
-          )
-          resolve([null, data])
+  private handleFetch(
+    promise: Promise<Response>
+  ): Promise<[boolean, FetchResponse]> {
+    let response: FetchResponse = {
+      status: "net",
+      statusText: "ERR_CONNECTION_REFUSED",
+    };
+    return new Promise((resolve) => {
+      return promise
+        .then((raw) => {
+          // Saving the status
+          response.status = raw.status;
+          response.statusText = raw.statusText;
+
+          // Sending json response
+          if (raw.ok) return raw.json();
+
+          // Parsing error text
+          return raw.text().then((text) => {
+
+            // Parsing error text
+            let [err, parsedObject] = this.parseText(text);
+
+            // Error body is plain text
+            if (err) throw new Error(text);
+
+            // Erorr body is object
+            return parsedObject
+          });
         })
-        .catch(err => {
-          const data = this.toError(
-            this.apiCase === 'snake_case'
-              ? convertKeysToCamelCase(err)
-              : err
-          )
-          resolve([data, null])
+        .then((json) => {
+          // Converting to camelCase if api is in snake_case
+          if (this.apiCase === 'snake_case') {
+            json = convertKeysToCamelCase(json)
+          }
+          // Sending success response
+          response = { ...response, ...json };
+          return resolve([false, response]);
         })
-    })
+        .catch((err) => {
+          // Sending error response
+          response.message = err.message;
+          return resolve([true, response]);
+        });
+    });
   }
 
-  setHeaders(headers: object) {
-    Object.entries(headers).forEach(([key, value]) => {
-      this.headers.append(key, value)
-    })
+  private getHeaders() {
+    const headers = new Headers()
+    Object
+      .entries(this.headers)
+      .forEach(([key, value]: any) => {
+        headers.append(key, value)
+      })
+    return headers
   }
 
-  removeHeaders(...keys: string[]) {
+  public setHeaders(headers: object) {
+    this.headers = {
+      ...this.headers,
+      ...headers
+    }
+  }
+
+  public removeHeaders(...keys: string[]) {
     keys.forEach(key => {
-      this.headers.delete(key)
+      delete this.headers[key]
     })
   }
 
-  get(endpoint: string, query?: object | string) {
+  public get(endpoint: string, query?: object) {
     const input = this.getUrl(endpoint, query)
+    const headers = this.getHeaders()
     return this.handleFetch(
       fetch(input, {
+        headers,
         method: 'GET',
-        headers: this.headers
+      })
+    )
+  }
+
+  public post(endpoint: string, body: any, query?: object) {
+    const input = this.getUrl(endpoint, query)
+    const headers = this.getHeaders()
+    if (!(body instanceof FormData)) {
+      if (this.apiCase === 'snake_case') {
+        body = convertKeysToSnakeCase(body)
+      }
+      body = JSON.stringify(body)
+      headers.append('Content-Type', 'application/json')
+    }
+    return this.handleFetch(
+      fetch(input, {
+        body,
+        headers,
+        method: 'POST',
+      })
+    )
+  }
+
+  public patch(endpoint: string, body: any, query?: object) {
+    const input = this.getUrl(endpoint, query)
+    const headers = this.getHeaders()
+    if (!(body instanceof FormData)) {
+      if (this.apiCase === 'snake_case') {
+        body = convertKeysToSnakeCase(body)
+      }
+      body = JSON.stringify(body)
+      headers.append('Content-Type', 'application/json')
+    }
+    return this.handleFetch(
+      fetch(input, {
+        body,
+        headers,
+        method: 'PATCH',
+      })
+    )
+  }
+
+  public delete(endpoint: string) {
+    const input = this.getUrl(endpoint)
+    const headers = this.getHeaders()
+    return this.handleFetch(
+      fetch(input, {
+        headers,
+        method: 'DELETE',
       })
     )
   }

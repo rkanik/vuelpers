@@ -7,7 +7,12 @@
 			<v-row>
 				<v-col cols="3">
 					<v-card>
-						<v-card-title>GET</v-card-title>
+						<v-card-title>
+							<v-layout justify-space-between>
+								<div>GET</div>
+								<v-btn color="primary" @click="onFetchGET">Fetch</v-btn>
+							</v-layout>
+						</v-card-title>
 						<v-card-text> </v-card-text>
 						<v-card-actions>
 							<v-btn color="primary" @click="onFetchGET">Fetch</v-btn>
@@ -24,11 +29,15 @@
 
 <script lang="ts">
 import Vue from "vue";
-
+import { createAPI } from "../../../lib/axios";
 import { FetchAPI } from "../../../lib/fetch";
 
+const axios = createAPI({
+	baseURL: "http://localhost:4000/api/v1",
+});
+
 const api = new FetchAPI({
-	apiCase: "camelCase",
+	apiCase: "snake_case",
 	baseURL: "http://localhost:4000/api/v1",
 });
 
@@ -39,8 +48,12 @@ export default Vue.extend({
 	async created() {},
 	methods: {
 		async onFetchGET() {
-			let [err, res] = await api.get("/todos/asd", { page: 1, perPage: 20 });
-			console.log(err, res);
+			let start = Date.now();
+			await axios.get("/todos");
+
+			let start2 = Date.now();
+			await api.get("/todos");
+			console.log(`${Date.now() - start}ms :: ${Date.now() - start2}ms`);
 		},
 	},
 });

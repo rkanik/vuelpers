@@ -15,11 +15,6 @@ registerComponents(
   ), Vue
 )
 
-// console.log(require.context(
-//   './components', true, // is deep
-//   /[A-Z]\w+\.(vue|js|ts)$/
-// ).keys());
-
 new Vue({
   router,
   store,

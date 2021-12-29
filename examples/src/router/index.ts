@@ -22,6 +22,11 @@ const routes: Array<RouteConfig> = [
     path: '/fetch-api',
     name: 'FetchAPI',
     component: () => import(/* webpackChunkName: "fetch-api" */ '../views/FetchApi.vue')
+  },
+  {
+    path: '/todos',
+    name: 'Todos',
+    component: () => import(/* webpackChunkName: "todos" */ '../views/Todos.vue')
   }
 ]
 
