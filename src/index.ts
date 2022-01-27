@@ -10,6 +10,10 @@ import { stringReplace, decodeString, encodeString } from './strings'
 import { importModules, createGetters, createMutations, handleAction } from './vuex'
 import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 
+export const isFile = (input: any) => {
+	return Object.prototype.toString.call(input) === '[object File]'
+}
+
 /**
  *
  * @param {number} time - How much time have to sleep

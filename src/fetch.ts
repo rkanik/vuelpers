@@ -1,7 +1,12 @@
 import {
+  jsonParse
+} from './index'
+
+import {
   convertKeysToCamelCase,
   convertKeysToSnakeCase
 } from './objects'
+
 import {
   queryString
 } from './query-string'
@@ -52,14 +57,6 @@ export class FetchAPI {
 
   }
 
-  private parseText(text: string): [boolean, any] {
-    try {
-      const parsed = JSON.parse(text)
-      return [false, parsed]
-    }
-    catch (_) { return [true, null] }
-  }
-
   private handleFetch(
     promise: Promise<Response>
   ): Promise<[boolean, FetchResponse]> {
@@ -81,7 +78,7 @@ export class FetchAPI {
           return raw.text().then((text) => {
 
             // Parsing error text
-            let [err, parsedObject] = this.parseText(text);
+            let [err, parsedObject] = jsonParse(text);
 
             // Error body is plain text
             if (err) throw new Error(text);
