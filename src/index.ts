@@ -10,6 +10,22 @@ import { stringReplace, decodeString, encodeString } from './strings'
 import { importModules, createGetters, createMutations, handleAction } from './vuex'
 import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 
+export const injectScript = (src: string, id: string, callback: Function) => {
+	if (!document) throw new Error("Cant't inject script outside browser/document.")
+
+	if (document.getElementById(id)) return callback()
+
+	const tag = "script"
+	const script = document.createElement(tag)
+	const scriptTag = document.getElementsByTagName(tag)[0]
+
+	script.id = id
+	script.src = src
+
+	if (callback) script.addEventListener("load", () => callback(), false)
+	scriptTag?.parentNode?.insertBefore(script, scriptTag)
+}
+
 export const isFile = (input: any) => {
 	return Object.prototype.toString.call(input) === '[object File]'
 }
