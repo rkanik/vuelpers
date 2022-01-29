@@ -212,6 +212,7 @@ interface BreakpointsUp { sm?: number; md?: number; lg?: number; xl?: number; xx
 export const calculateBreakpoint = (width: number, breakpoints: BreakpointsUp = {}) => {
 	const { sm = 640, md = 768, lg = 1024, xl = 1280, xxl = 1536 }: BreakpointsUp = breakpoints
 	return {
+		mobile: isMobile(),
 		// EXACT
 		xs: eval(`${width} < ${sm}`) as boolean,
 		sm: eval(`${width} >= ${sm} && ${width} < ${md}`) as boolean,
