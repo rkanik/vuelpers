@@ -10,6 +10,23 @@ import { stringReplace, decodeString, encodeString } from './strings'
 import { importModules, createGetters, createMutations, handleAction } from './vuex'
 import { convertKeysToCamelCase, convertKeysToSnakeCase, omitEmpties } from './objects'
 
+export const omitProperty = (object: any, ...properties: string[]) => {
+	const traverse = (object: any, path = '') => {
+		return Object.entries(object).reduce((data: any, [key, value]) => {
+			const currentPath = !path ? key : `${path}.${key}`;
+			if (properties.includes(key) || properties.includes(currentPath)) {
+				return data
+			}
+			else if (isPlainObject(value)) {
+				data[key] = traverse(value, currentPath)
+			}
+			else data[key] = value
+			return data;
+		}, {});
+	}
+	return traverse(object)
+};
+
 export const injectScript = (src: string, id: string, callback: Function) => {
 	if (!document) throw new Error("Cant't inject script outside browser/document.")
 
