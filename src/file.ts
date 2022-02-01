@@ -1,3 +1,7 @@
+export const isFile = (input: any) => {
+	return Object.prototype.toString.call(input) === '[object File]'
+}
+
 export const toBase64 = (file: File) => {
 	return new Promise((resolve) => {
 		const fileReader = new FileReader()

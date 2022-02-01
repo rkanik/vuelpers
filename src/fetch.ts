@@ -1,7 +1,4 @@
-import {
-  jsonParse
-} from './index'
-
+import { jsonParse } from './common'
 import {
   convertKeysToCamelCase,
   convertKeysToSnakeCase

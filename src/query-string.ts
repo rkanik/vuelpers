@@ -1,5 +1,10 @@
+import { get } from "lodash";
+
 export const queryString = {
-  parse(query: string) {
+  get(key: string) {
+    return get(this.parse(), key)
+  },
+  parse(query: string = location.search.substring(1)) {
     return Object.fromEntries(
       new URLSearchParams(query)
     )
