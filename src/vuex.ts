@@ -162,8 +162,11 @@ export const createMutations = <S>(...types: MutationType[]): MutationTree<S> =>
 		}, {})
 };
 
+interface CustomGetterTree<S, R> {
+	[key: string]: string | Getter<S, R>
+}
 export const createGetters = <S = unknown, R = unknown>(
-	...keys: (string | GetterTree<S, R>)[]
+	...keys: (string | CustomGetterTree<S, R>)[]
 ) => {
 	return keys.reduce((getterTree: GetterTree<S, R>, name) => {
 		if (isString(name)) {
