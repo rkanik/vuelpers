@@ -15,7 +15,7 @@ type FetchAPIConfig = {
   apiCase?: Cases
 }
 
-type FetchResponse = {
+export type FetchResponse = {
   status: number | 'net'
   statusText: string
   message?: string

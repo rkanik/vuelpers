@@ -1,4 +1,11 @@
-import { get, set, camelCase, isArray, isFunction, isPlainObject } from 'lodash'
+import { get, set, camelCase, isArray, isFunction, isPlainObject, isString } from 'lodash'
+import { FetchResponse } from './fetch'
+
+export type Getter<S, R> = (state: S, getters: any, rootState: R, rootGetters: any) => any
+
+export interface GetterTree<S, R> {
+	[key: string]: Getter<S, R>
+}
 
 type Mutation<S> = (state: S, payload?: any) => any;
 interface MutationTree<S> {
@@ -155,20 +162,25 @@ export const createMutations = <S>(...types: MutationType[]): MutationTree<S> =>
 		}, {})
 };
 
-export const createGetters = (...getters: string[]) => {
-	return getters.reduce((gettersObj: { [key: string]: any }, name: string) => {
-		if (typeof name === 'string') {
-			gettersObj[`$${name}`] = (state: any) => state[name]
+export const createGetters = <S = unknown, R = unknown>(
+	...keys: (string | GetterTree<S, R>)[]
+) => {
+	return keys.reduce((getterTree: GetterTree<S, R>, name) => {
+		if (isString(name)) {
+			getterTree[`$${name}`] = (state: S) => get(state, name)
 		}
-		if (isPlainObject(name)) Object.entries(name).forEach(([key, path]: any[]) => {
-			gettersObj[`$${key}`] = isFunction(path)
-				? path : (state: any) => get(state, path)
-		})
-		return gettersObj
+		if (isPlainObject(name)) {
+			Object.entries(name).forEach(([key, path]: [string, any]) => {
+				getterTree[`$${key}`] = isString(path)
+					? (state: S) => get(state, path) : path
+			})
+		}
+		return getterTree
 	}, {})
 }
 
-export const handleAction = (apiRequestPromise: Promise<any>, successCallback?: any, errorCallback?: any) => {
+type SuccessResponse = FetchResponse | Record<string, any>
+export const handleAction = (apiRequestPromise: Promise<any>, successCallback?: SuccessResponse, errorCallback?: any) => {
 	return new Promise(resolve => {
 		apiRequestPromise
 			.then(([error, response]) => {

@@ -1,6 +1,6 @@
 {
   "name": "vuelpers",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "Common javascript helpers methods for vue developers",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
