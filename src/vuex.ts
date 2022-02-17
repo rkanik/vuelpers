@@ -16,6 +16,35 @@ interface ModuleTree<R> {
 	[key: string]: any;
 }
 
+interface Pagination<T> {
+  total: number;
+  currentPage: number;
+  perPage: number;
+  from: number | null;
+  to: number | null;
+  isLoaded: boolean;
+  isLoading: boolean;
+  isRefetching: boolean;
+  data: T[];
+}
+export const createPaginaion = <T = unknown>(
+  config: Partial<Pagination<T>>
+) => {
+  const pagination: Pagination<T> = {
+    total: 0,
+    currentPage: 1,
+    perPage: 10,
+    from: null,
+    to: null,
+    isLoaded: false,
+    isLoading: false,
+    isRefetching: false,
+    data: [],
+    ...config,
+  };
+  return pagination;
+};
+
 /**
  * @example
  * importModules(
