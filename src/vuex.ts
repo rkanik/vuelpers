@@ -16,7 +16,7 @@ interface ModuleTree<R> {
 	[key: string]: any;
 }
 
-interface Pagination<T> {
+export interface Pagination<T> {
   total: number;
   currentPage: number;
   perPage: number;
@@ -28,9 +28,9 @@ interface Pagination<T> {
   data: T[];
 }
 export const createPaginaion = <T = unknown>(
-  config: Partial<Pagination<T>>
+  config: Partial<Pagination<T>> = {}
 ) => {
-  const pagination: Pagination<T> = {
+  return {
     total: 0,
     currentPage: 1,
     perPage: 10,
@@ -41,8 +41,7 @@ export const createPaginaion = <T = unknown>(
     isRefetching: false,
     data: [],
     ...config,
-  };
-  return pagination;
+  } as Pagination<T>;
 };
 
 /**

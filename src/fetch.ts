@@ -173,6 +173,25 @@ export class FetchAPI {
     )
   }
 
+  public put(endpoint: string, body: any, query?: object) {
+    const input = this.getUrl(endpoint, query)
+    const headers = this.getHeaders()
+    if (!(body instanceof FormData)) {
+      if (this.apiCase === 'snake_case') {
+        body = convertKeysToSnakeCase(body)
+      }
+      body = JSON.stringify(body)
+      headers.append('Content-Type', 'application/json')
+    }
+    return this.handleFetch(
+      fetch(input, {
+        body,
+        headers,
+        method: 'PUT',
+      })
+    )
+  }
+
   public delete(endpoint: string) {
     const input = this.getUrl(endpoint)
     const headers = this.getHeaders()
