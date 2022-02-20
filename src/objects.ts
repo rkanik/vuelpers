@@ -1,26 +1,43 @@
 import { isEmpty, secureDataType } from './common'
 import { snakeCase, camelCase, isString, isArray, isPlainObject } from 'lodash'
+import { Cases } from './types'
 
-export const toFormData = (value: any, extra: object = {}) => {
-	const data = { ...convertKeysToSnakeCase(value), ...extra }
-	const formData = new FormData()
-
-	const traverse = (value: any, key?: any) => {
-		if (isArray(value)) {
-			value.forEach((v: any, index) => {
-				traverse(v, key ? `${key}[${index}]` : index)
-			})
-		} else if (isPlainObject(value)) {
-			Object.entries(value).forEach(([p, v]: any[]) => {
-				traverse(v, key ? `${key}[${p}]` : p)
-			})
-		} else {
-			formData.append(key, value)
-		}
-	}
-	traverse(data)
-	return formData
+export interface FormDataConfig {
+  convertCase: Cases;
 }
+export const toFormData = (
+  value: any,
+  extra: object = {},
+  config?: Partial<FormDataConfig>
+) => {
+  let data = { ...value, ...extra };
+
+  if (config && config.convertCase) {
+    if (config.convertCase === "camelCase") {
+      data = convertKeysToCamelCase(data);
+    } else if (config.convertCase === "snake_case") {
+      data = convertKeysToSnakeCase(data);
+    }
+  }
+
+  const formData = new FormData();
+
+  const traverse = (value: any, key?: any) => {
+    if (isArray(value)) {
+      value.forEach((v: any, index) => {
+        traverse(v, key ? `${key}[${index}]` : index);
+      });
+    } else if (isPlainObject(value)) {
+      Object.entries(value).forEach(([p, v]: any[]) => {
+        traverse(v, key ? `${key}[${p}]` : p);
+      });
+    } else {
+      formData.append(key, value);
+    }
+  };
+  traverse(data);
+  return formData;
+};
 
 export const omitProperty = (object: any, ...properties: string[]) => {
 	const traverse = (object: any, path = '') => {

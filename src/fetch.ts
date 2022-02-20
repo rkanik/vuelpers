@@ -1,8 +1,7 @@
+import { Cases } from "./types";
 import { jsonParse } from "./common";
 import { queryString } from "./query-string";
 import { convertKeysToCamelCase, convertKeysToSnakeCase } from "./objects";
-
-type Cases = "camelCase" | "snake_case" | null;
 
 type FetchAPIConfig = {
   baseURL: string;
