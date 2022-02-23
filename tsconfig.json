@@ -12,15 +12,9 @@
     "strict": true,
     "target": "ES6",
     "moduleResolution": "node",
-    "types": [
-      "node"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "types": ["node"],
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": []
 }
