@@ -2,11 +2,7 @@
 	<v-container>
 		<v-row>
 			<v-col cols="12" sm="11" md="8" xl="5" class="mx-auto">
-				<v-form
-					ref="todoFormRef"
-					v-model="isValidTodo"
-					@submit.prevent="onSubmitTodo"
-				>
+				<v-form ref="todoFormRef" v-model="isValidTodo" @submit.prevent="onSubmitTodo">
 					<v-card>
 						<v-card-text class="pb-0">
 							<v-text-field
@@ -30,7 +26,7 @@
 					</v-card>
 				</v-form>
 
-				<v-subheader class="mt-5"> TODOS </v-subheader>
+				<v-subheader class="mt-5">TODOS</v-subheader>
 				<v-list dense two-line>
 					<v-list-item
 						v-for="(todo, todoIndex) in todos"
@@ -50,15 +46,11 @@
 							<v-list-item-title
 								class="subtitle-1"
 								:class="{ 'text-decoration-line-through': todo.isCompleted }"
-							>
-								{{ todo.title }}
-							</v-list-item-title>
-							<v-list-item-subtitle
-								:class="{ 'text-decoration-line-through': todo.isCompleted }"
-							>
+							>{{ todo.title }}</v-list-item-title>
+							<v-list-item-subtitle :class="{ 'text-decoration-line-through': todo.isCompleted }">
 								{{
 									todo.description ||
-									"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dicta ad ab dolorem blanditiis at, corrupti repudiandae sit dolores iste, sapiente quas hic maiores, odit molestiae beatae eaque ullam odio corporis libero tempora! Vero deserunt, laboriosam, ipsum, at ullam voluptate aperiam voluptatibus natus eligendi nisi aliquid necessitatibus voluptates est incidunt dolorem."
+										"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dicta ad ab dolorem blanditiis at, corrupti repudiandae sit dolores iste, sapiente quas hic maiores, odit molestiae beatae eaque ullam odio corporis libero tempora! Vero deserunt, laboriosam, ipsum, at ullam voluptate aperiam voluptatibus natus eligendi nisi aliquid necessitatibus voluptates est incidunt dolorem."
 								}}
 							</v-list-item-subtitle>
 						</v-list-item-content>
@@ -79,8 +71,11 @@ import Vue from "vue";
 import { FetchAPI } from "../../../lib/fetch";
 
 const api = new FetchAPI({
-	apiCase: "camelCase",
+	// apiCase: "camelCase",
 	baseURL: "http://localhost:4000/api/v1",
+	// request: {
+	// 	convertCase: 'camelCase'
+	// }
 });
 
 type Model = {

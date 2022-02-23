@@ -5,3 +5,5 @@ examples
 nodemon.json
 tsconfig.json
 tsconfig.prod.json
+.editorconfig
+*.backup

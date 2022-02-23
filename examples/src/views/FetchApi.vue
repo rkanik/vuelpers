@@ -13,15 +13,15 @@
 								<v-btn color="primary" @click="onFetchGET">Fetch</v-btn>
 							</v-layout>
 						</v-card-title>
-						<v-card-text> </v-card-text>
+						<v-card-text></v-card-text>
 						<v-card-actions>
 							<v-btn color="primary" @click="onFetchGET">Fetch</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-col>
-				<v-col cols="3"> </v-col>
-				<v-col cols="3"> </v-col>
-				<v-col cols="3"> </v-col>
+				<v-col cols="3"></v-col>
+				<v-col cols="3"></v-col>
+				<v-col cols="3"></v-col>
 			</v-row>
 		</v-container>
 	</v-container>
@@ -37,7 +37,7 @@ const axios = createAPI({
 });
 
 const api = new FetchAPI({
-	apiCase: "snake_case",
+	// apiCase: "snake_case",
 	baseURL: "http://localhost:4000/api/v1",
 });
 
@@ -45,7 +45,7 @@ export default Vue.extend({
 	name: "FetchAPI",
 	data: (): any => ({}),
 	computed: {},
-	async created() {},
+	async created() { },
 	methods: {
 		async onFetchGET() {
 			let start = Date.now();

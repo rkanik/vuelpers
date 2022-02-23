@@ -1,34 +1,34 @@
 {
-  "name": "vuelpers",
-  "version": "2.2.0",
-  "description": "Common javascript helpers methods for vue developers",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "scripts": {
-    "build": "node ./scripts/build.js",
-    "start": "node ./lib --NODE_ENV prod",
-    "dev": "nodemon --config nodemon.json",
-    "serve": "cd examples && yarn serve"
-  },
-  "author": "RK Anik",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/js-cookie": "^3.0.1",
-    "@types/lodash": "^4.14.176",
-    "@types/node": "^16.11.7",
-    "child_process": "^1.0.2",
-    "fs-extra": "^10.0.0",
-    "nodemon": "^2.0.15",
-    "ts-node": "^10.4.0",
-    "typescript": "^4.4.4"
-  },
-  "dependencies": {
-    "axios": "^0.24.0",
-    "js-cookie": "^3.0.1",
-    "lodash": "^4.17.21",
-    "tslib": "^2.3.1"
-  },
-  "directories": {
-    "lib": "lib"
-  }
+	"name": "vuelpers",
+	"version": "2.2.2",
+	"description": "Common javascript helpers methods for vue developers",
+	"main": "lib/index.js",
+	"types": "lib/index.d.ts",
+	"scripts": {
+		"build": "node ./scripts/build.js",
+		"start": "node ./lib --NODE_ENV prod",
+		"dev": "nodemon --config nodemon.json",
+		"serve": "cd examples && yarn serve"
+	},
+	"author": "RK Anik",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/js-cookie": "^3.0.1",
+		"@types/lodash": "^4.14.176",
+		"@types/node": "^16.11.7",
+		"child_process": "^1.0.2",
+		"fs-extra": "^10.0.0",
+		"nodemon": "^2.0.15",
+		"ts-node": "^10.4.0",
+		"typescript": "^4.4.4"
+	},
+	"dependencies": {
+		"axios": "^0.24.0",
+		"js-cookie": "^3.0.1",
+		"lodash": "^4.17.21",
+		"tslib": "^2.3.1"
+	},
+	"directories": {
+		"lib": "lib"
+	}
 }

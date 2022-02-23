@@ -1,59 +1,77 @@
-export const VIntoView = {
-  install(Vue: any) {
-    const directives = new Map();
+export type OnRevealOptions = {
+	name?: string;
+	once?: boolean;
+	offset?: number;
+	intensity?: number;
+};
 
-    Vue.directive("into-view", {
-      inserted(el: HTMLElement, binding: any) {
-        const {
-          id,
-          isViewed,
-          onIntoView,
-          interval = 50,
-          margin = 200,
-        } = binding.value || {};
+export const VOnReveal = {
+	install(Vue: any, options: OnRevealOptions = {}) {
+		const { name = "on-reveal" } = options;
 
-        if (
-          !id ||
-          typeof isViewed !== "function" ||
-          typeof onIntoView !== "function"
-        ) {
-          throw new Error(
-            "v-into-view directive requires a id: string, isViewed and onIntoView functions"
-          );
-        }
+		const directives = new Map();
 
-        let timeout: any;
-        const onScroll = () => {
-          if (timeout) return;
+		Vue.directive(name, {
+			inserted(el: HTMLElement, binding: any) {
+				binding.value.id = Math.random().toString(36).substring(2, 9);
+				const {
+					id,
+					callback,
+					offset = options.offset || 0,
+					once = options.once || false,
+					intensity = options.intensity || 200,
+				} = binding.value || {};
 
-          timeout = setTimeout(() => {
-            clearTimeout(timeout);
-            timeout = null;
+				if (typeof callback !== "function") {
+					throw new Error(
+						`v-${name} directive requires a callback function`
+					);
+				}
 
-            if (binding.value.isViewed()) {
-              window.removeEventListener("scroll", onScroll);
-              directives.delete(id);
-            }
+				let timeout: any;
+				let isInView = false;
+				let isViewed = false;
+				const onScroll = () => {
+					if (timeout) return;
 
-            const top = el.getBoundingClientRect().top;
-            if (top - window.innerHeight < -margin) {
-              binding.value.onIntoView();
-            }
-          }, interval);
-        };
+					timeout = setTimeout(() => {
+						clearTimeout(timeout);
+						timeout = null;
 
-        directives.set(id, onScroll);
-        window.addEventListener("scroll", onScroll);
-      },
-      unbind(_: any, binding: any) {
-        if (!binding.value || !binding.value.id) return;
-        const onScroll = directives.get(binding.value.id);
+						if (once && isViewed) {
+							window.removeEventListener("scroll", onScroll);
+							directives.delete(id);
+						}
 
-        if (!onScroll) return;
+						const { top, height } = el.getBoundingClientRect();
+						if (
+							top - window.innerHeight - offset < 0 && // top is in view
+							top - window.innerHeight + height > 0 // scrollbar has passed bottom
+						) {
+							if (!isInView || (once && !isViewed)) {
+								binding.value.callback();
+							}
 
-        window.removeEventListener("scroll", onScroll);
-        directives.delete(binding.value.id);
-      },
-    });
-  },
+							isViewed = true;
+							isInView = true;
+						} else {
+							isInView = false;
+						}
+					}, intensity);
+				};
+
+				directives.set(id, onScroll);
+				window.addEventListener("scroll", onScroll);
+			},
+			unbind(_: any, binding: any) {
+				if (!binding.value) return;
+				const onScroll = directives.get(binding.value.id);
+
+				if (!onScroll) return;
+
+				window.removeEventListener("scroll", onScroll);
+				directives.delete(binding.value.id);
+			},
+		});
+	},
 };

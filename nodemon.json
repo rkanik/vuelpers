@@ -1,5 +1,7 @@
 {
-  "ext": "ts",
-  "watch": ["src"],
-  "exec": "ts-node ./src --NODE_ENV dev"
+	"ext": "ts",
+	"watch": [
+		"src"
+	],
+	"exec": "tsc --build tsconfig.prod.json"
 }
