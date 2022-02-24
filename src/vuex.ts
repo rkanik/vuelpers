@@ -51,7 +51,7 @@ export const createPaginaion = <T = unknown>(
  *       "./modules", false, /\.store\.(js|ts)$/
  *    )
  * )
- * 
+ *
  * @param context - Require context
  */
 export const importModules = <R>(context: any): ModuleTree<R> => {
@@ -165,7 +165,7 @@ const mutations = {
 			return get(el, match) === get(data, match) ? data : el
 		}))
 	},
-	[MERGE]: (state: any, [path, items, match = 'id']: any) => {
+	[MERGE]: (state: any, [path, items, match = 'id', type = 'unshift']: any) => {
 		let target = get(state, path)
 
 		if (!target || !isArray(target)) {
@@ -175,7 +175,9 @@ const mutations = {
 		items.forEach((item: any) => {
 			let index = target.findIndex((a: any) => get(a, match) === get(item, match))
 			if (index !== -1) target.splice(index, 1, item)
-			else target.unshift(item)
+			else {
+				type === 'unshift' ?	target.unshift(item) : target.push(item)
+			}
 		})
 	}
 }
