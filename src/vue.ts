@@ -71,7 +71,7 @@ const onVImgError = (config: VImgError) => {
 	const img = el.querySelector(".v-image__image") as HTMLElement;
 	if (!img) return;
 
-	img.classList.remove(`.v-image__image--preload`);
+	img.classList.remove(`v-image__image--preload`);
 	img.style.backgroundImage = `url(${VIA_PLACEHOLDER}${size})`;
 };
 
