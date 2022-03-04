@@ -1,4 +1,5 @@
 export type TimeUnit = 'SEC' | 'MIN' | 'HOUR' | 'DAY' | 'WEEK' | 'MONTH' | 'YEAR'
+export const VIA_PLACEHOLDER = "https://via.placeholder.com/"
 export const TIME = {
 	SEC: 1000,
 	MIN: 1000 * 60,

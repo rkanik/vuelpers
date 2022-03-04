@@ -5,26 +5,38 @@ export type OnRevealOptions = {
 	intensity?: number;
 };
 
+export type OnRevealProps = {
+	id?: string;
+	once?: boolean;
+	offset?: number;
+	intensity?: number;
+	onReveal: () => void;
+	onLeave?: () => void;
+};
+
+type OnRevealBindting = {
+	value: OnRevealProps;
+};
+
 export const VOnReveal = {
 	install(Vue: any, options: OnRevealOptions = {}) {
+		const directives = new Map();
 		const { name = "on-reveal" } = options;
 
-		const directives = new Map();
-
 		Vue.directive(name, {
-			inserted(el: HTMLElement, binding: any) {
-				binding.value.id = Math.random().toString(36).substring(2, 9);
+			inserted(el: HTMLElement, binding: OnRevealBindting) {
 				const {
-					id,
-					callback,
+					onLeave,
+					onReveal,
 					offset = options.offset || 0,
 					once = options.once || false,
 					intensity = options.intensity || 200,
+					id = Math.random().toString(36).substring(2, 9),
 				} = binding.value || {};
 
-				if (typeof callback !== "function") {
+				if (typeof onReveal !== "function") {
 					throw new Error(
-						`v-${name} directive requires a callback function`
+						`v-${name} directive requires a onReveal function`
 					);
 				}
 
@@ -44,18 +56,21 @@ export const VOnReveal = {
 						}
 
 						const { top, height } = el.getBoundingClientRect();
+						// top + height // > 0 bottom is in view from bottom
+
 						if (
-							top - window.innerHeight - offset < 0 && // top is in view
-							top - window.innerHeight + height > 0 // scrollbar has passed bottom
+							top - window.innerHeight - offset < 0 && // element top is in view
+							top - window.innerHeight + height > 0 // scrollbar has passed the element
 						) {
 							if (!isInView || (once && !isViewed)) {
-								binding.value.callback();
+								binding.value.onReveal();
 							}
 
 							isViewed = true;
 							isInView = true;
 						} else {
 							isInView = false;
+							onLeave && onLeave();
 						}
 					}, intensity);
 				};

@@ -1,6 +1,7 @@
 import { isMobile } from "./browser";
 import { isPlainObject, isString } from "lodash";
 
+
 /**
  *
  * @param {number} time - How much time have to sleep
