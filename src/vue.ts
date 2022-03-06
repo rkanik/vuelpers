@@ -43,13 +43,12 @@ interface VImgError {
 	index?: number;
 }
 
-interface ImgError {
-	$event: ErrorEvent;
+export type ImgErrorConfig = {
+	ref?: VRef;
 	size?: string;
+	index?: number;
+	$event: ErrorEvent;
 }
-
-// export type ImgErrorConfig = {} & (VImgError | ImgError);
-export interface ImgErrorConfig extends VImgError, ImgError {}
 
 const onVImgError = (config: VImgError) => {
 	// Initialize config
@@ -76,7 +75,11 @@ const onVImgError = (config: VImgError) => {
 };
 
 export const onImgError = (config: ImgErrorConfig) => {
-	if (config.ref) return onVImgError(config);
+	if (config.ref) return onVImgError({
+		ref: config.ref,
+		index: config.index,
+		size: config.size
+	});
 
 	// Initialize config
 	const { $event, size = "512x512" } = config;
