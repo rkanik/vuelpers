@@ -47,7 +47,7 @@ export type ImgErrorConfig = {
 	ref?: VRef;
 	size?: string;
 	index?: number;
-	$event: ErrorEvent;
+	$event?: ErrorEvent;
 }
 
 const onVImgError = (config: VImgError) => {

@@ -1,3 +1,12 @@
+type Select<T> = keyof T
+type With<T> = {
+	[key in keyof Required<T>]?: (Select<T[key]> | With<Required<T[key]>>)[]
+}
+
+export const selectWith = <T=any>(config: (Select<T> | With<T>)[]) => {
+	return JSON.stringify(config)
+}
+
 export const miniId = (len: number = 5) => {
 	return Math.random()
 		.toString(36).slice(len <= 10 ? -len : -10)
