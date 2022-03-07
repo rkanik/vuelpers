@@ -43,12 +43,23 @@ interface VImgError {
 	index?: number;
 }
 
-export type ImgErrorConfig = {
-	ref?: VRef;
-	size?: string;
-	index?: number;
-	$event?: ErrorEvent;
-}
+type RequiredOne<T, Keys extends keyof T = keyof T> = Pick<
+	T,
+	Exclude<keyof T, Keys>
+> &
+	{
+		[K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>;
+	}[Keys];
+
+export type ImgErrorConfig = RequiredOne<
+	{
+		ref: VRef;
+		$event: ErrorEvent;
+		size?: string;
+		index?: number;
+	},
+	"$event" | "ref"
+>;
 
 const onVImgError = (config: VImgError) => {
 	// Initialize config
@@ -75,11 +86,12 @@ const onVImgError = (config: VImgError) => {
 };
 
 export const onImgError = (config: ImgErrorConfig) => {
-	if (config.ref) return onVImgError({
-		ref: config.ref,
-		index: config.index,
-		size: config.size
-	});
+	if (config.ref)
+		return onVImgError({
+			ref: config.ref,
+			index: config.index,
+			size: config.size,
+		});
 
 	// Initialize config
 	const { $event, size = "512x512" } = config;
