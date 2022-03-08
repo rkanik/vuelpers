@@ -1,6 +1,15 @@
-type Select<T> = keyof T
+type ArrayElement<ArrayType> = ArrayType extends readonly (infer ElementType)[]
+	? ElementType
+	: never
+
+type Select<T> = keyof Required<T>
 type With<T> = {
-	[key in keyof Required<T>]?: (Select<T[key]> | With<Required<T[key]>>)[]
+	[key in keyof Required<T>]?: Required<T>[key] extends unknown[]
+		? (
+				| Select<ArrayElement<Required<T>[key]>>
+				| With<ArrayElement<Required<T>[key]>>
+		  )[]
+		: (Select<Required<T>[key]> | With<Required<T>[key]>)[]
 }
 
 export const selectWith = <T=any>(config: (Select<T> | With<T>)[]) => {
