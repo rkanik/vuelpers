@@ -31,6 +31,13 @@ export const registerComponents = (context: any, Vue: any) => {
 	});
 };
 
+export const getVRef = (ref: VRef): [Element | undefined, Vue | undefined] => {
+	if (!ref) return [undefined, undefined]
+	const eRef = Array.isArray(ref) ? ref[0] : ref
+	if (ref instanceof Element) return [ref, undefined]
+	return [(eRef as Vue).$el as Element, eRef as Vue]
+}
+
 export const getRouteMeta = (route: any, key: string) => {
 	const matchedRoute = route.matched.find((route: any) => route.meta[key]);
 	if (!matchedRoute) return null;

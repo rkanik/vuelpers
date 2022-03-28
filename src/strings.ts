@@ -1,3 +1,5 @@
+import { AnyRecord } from "./types"
+
 type ArrayElement<ArrayType> = ArrayType extends readonly (infer ElementType)[]
 	? ElementType
 	: never
@@ -12,13 +14,30 @@ type With<T> = {
 		: (Select<Required<T>[key]> | With<Required<T>[key]>)[]
 }
 
-export const selectWith = <T=any>(config: (Select<T> | With<T>)[]) => {
-	return JSON.stringify(config)
+export const selectWith = <T>(args: (Select<T> | With<T>)[]) => {
+	return JSON.stringify(args)
 }
 
 export const miniId = (len: number = 5) => {
 	return Math.random()
 		.toString(36).slice(len <= 10 ? -len : -10)
+}
+
+export const removeSpecialChars = (str: string) => {
+	return str.replace(/[^a-zA-Z0-9 ]/g, '').trim()
+}
+
+export const slugify = (str: string) => {
+	return removeSpecialChars(str)
+		.toLowerCase()
+		.split(' ')
+		.filter((a) => a)
+		.map((a) => a.trim())
+		.join('-')
+}
+
+export const isExactSame = (value1: AnyRecord, value2: AnyRecord) => {
+	return JSON.stringify(value1) === JSON.stringify(value2)
 }
 
 interface PasswordType { length?: number, chars?: boolean, symbols?: boolean, numbers?: boolean }

@@ -18,6 +18,47 @@ type OnRevealBindting = {
 	value: OnRevealProps;
 };
 
+export const VOnIntersect = {
+	install(Vue: any, options: OnRevealOptions = {}) {
+		const directives = new Map();
+		const { name = "on-intersect" } = options;
+
+		Vue.directive(name, {
+			inserted(el: HTMLElement, binding: OnRevealBindting) {
+				const observer = new IntersectionObserver(
+					(entries) => {
+						entries.forEach((entry) => {
+							console.log(entry);
+							//   if (entry.isIntersecting) {
+							// 	//  let elem = entry.target;
+
+							// 	//  if (entry.intersectionRatio >= 0.75) {
+							// 	// 	intersectionCounter++;
+							// 	//  }
+							//   }
+						});
+					},
+					{
+						// root: document.querySelector("#scrollArea"),
+						rootMargin: "0px",
+						threshold: 1.0,
+					}
+				);
+				observer.observe(el);
+			},
+			unbind(_: any, binding: any) {
+				// if (!binding.value) return;
+				// const onScroll = directives.get(binding.value.id);
+
+				// if (!onScroll) return;
+
+				// window.removeEventListener("scroll", onScroll);
+				// directives.delete(binding.value.id);
+			},
+		});
+	},
+};
+
 export const VOnReveal = {
 	install(Vue: any, options: OnRevealOptions = {}) {
 		const directives = new Map();
