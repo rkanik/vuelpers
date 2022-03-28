@@ -57,14 +57,20 @@ const toError = (error: any) => {
 	}
 };
 
-const handler = (requestPromise: Promise<any>, caseType: Cases) => {
+const handler = (
+	requestPromise: Promise<any>,
+	caseType: Cases
+): Promise<[error: any, response: any]> => {
 	return new Promise((resolve) => {
 		requestPromise
 			.then((res) =>
-				resolve([null, ensureCase(toSuccess(res.data), caseType)])
+				resolve([false, ensureCase(toSuccess(res.data), caseType)])
 			)
 			.catch((error) => {
-				resolve([ensureCase(toError(error.response || error), caseType)]);
+				resolve([
+					ensureCase(toError(error.response || error), caseType),
+					null,
+				]);
 			});
 	});
 };
