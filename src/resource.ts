@@ -133,5 +133,77 @@
 // 	},
 // });
 
-
 // export { APIResource };
+
+type HttpMethod = keyof typeof HttpMethods;
+enum HttpMethods {
+	GET = "GET",
+	POST = "POST",
+	PUT = "PUT",
+	PATCH = "PATCH",
+	DELETE = "DELETE",
+}
+
+type MethodKeys = keyof typeof Methods;
+enum Methods {
+	fetch = "fetch",
+
+	insert = "insert",
+	insertOne = "insertOne",
+
+	fetchOne = "fetchOne",
+	fetchById = "fetchById",
+
+	updateOne = "updateOne",
+	updateById = "updateById",
+
+	deleteOne = "deleteOne",
+	deleteById = "deleteById",
+}
+
+interface ResourceConfig {
+	baseURL?: string;
+	endpoint: string;
+	endpoints: {
+		[key in MethodKeys]?: string;
+	};
+}
+
+export const createResource = (config: ResourceConfig) => {
+	const {
+		baseURL = "",
+		endpoint = "",
+		endpoints: {
+			fetch = "/",
+			insert = "/",
+			insertOne = "/",
+
+			fetchOne = "/:id",
+			fetchById = "/:id",
+
+			updateOne = "/:id",
+			updateById = "/:id",
+
+			deleteOne = "/:id",
+			deleteById = "/:id",
+		},
+	} = config || {};
+
+	const url = `${baseURL}${endpoint}`;
+
+	return {
+		[Methods.fetch]: (query?: object) => {},
+
+		[Methods.insert]: (data: any[]) => {},
+		[Methods.insertOne]: (data: any) => {},
+
+		[Methods.fetchOne]: (where: any, query?: object) => {},
+		[Methods.fetchById]: (id: any, query?: object) => {},
+
+		[Methods.updateOne]: (where: any, data: any) => {},
+		[Methods.updateById]: (id: any, query?: object) => {},
+
+		[Methods.deleteOne]: (where: any) => {},
+		[Methods.deleteById]: (id: any, query?: object) => {},
+	};
+};

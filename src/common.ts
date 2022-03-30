@@ -54,7 +54,10 @@ export const secureDataType = (input: any) => {
 	if (input === 'undefined') return undefined
 
 	// Possible intended string
-	if (['0', '+', '-'].some(v => input.startsWith(v))) return input
+	if (['+', '-'].some(v => input.startsWith(v))) return input
+
+	// Possible intended number (without 0.00)
+	if (input.startsWith('0') && input.length > 1 && !input.startsWith('0.')) return input
 
 	// Json encoded
 	const [parseError, parsedData] = jsonParse(input)
