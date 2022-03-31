@@ -167,6 +167,15 @@ export class FetchAPI {
 		});
 	}
 
+	public toCallback = async (
+		request: Promise<[boolean, FetchResponse]>,
+		callback?: (res: [boolean, FetchResponse]) => void
+	) => {
+		const res = await request;
+		if (callback) callback(res);
+		return res;
+	};
+
 	public get(endpoint: string, query?: object) {
 		const input = this.getUrl(endpoint, query);
 		const headers = this.getHeaders();
