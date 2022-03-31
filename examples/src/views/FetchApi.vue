@@ -33,27 +33,26 @@ import { createAPI } from "../../../lib/axios";
 import { FetchAPI } from "../../../lib/fetch";
 
 const axios = createAPI({
-	baseURL: "http://localhost:4000/api/v1",
+	baseURL: "http://localhost:8000/api/v1",
 });
 
 const api = new FetchAPI({
 	// apiCase: "snake_case",
-	baseURL: "http://localhost:4000/api/v1",
+	baseURL: "http://localhost:8000/api/v1",
 });
 
 export default Vue.extend({
 	name: "FetchAPI",
 	data: (): any => ({}),
 	computed: {},
-	async created() { },
+	async created() {},
 	methods: {
 		async onFetchGET() {
-			let start = Date.now();
-			await axios.get("/todos");
+			const [axErr, axRes] = await axios.post("/login", {});
+			console.log(axErr.response, axRes);
 
-			let start2 = Date.now();
-			await api.get("/todos");
-			console.log(`${Date.now() - start}ms :: ${Date.now() - start2}ms`);
+			const [err, res] = await api.post("/login", {});
+			console.log(err, res);
 		},
 	},
 });
