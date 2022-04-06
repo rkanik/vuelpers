@@ -55,39 +55,47 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from 'vue'
 
 export default Vue.extend({
-	name: "App",
+	name: 'App',
 
 	data: () => ({
 		drawer: null,
 		navs: [
 			{
-				text: "Home",
-				to: "/",
+				text: 'Home',
+				to: '/',
 			},
 			{
-				text: "About",
-				to: "/about",
+				text: 'About',
+				to: '/about',
 			},
 			{
-				text: "Contact",
-				to: "/contact",
+				text: 'Contact',
+				to: '/contact',
 			},
 			{
-				text: "Todos",
-				to: "/todos",
+				text: 'Todos',
+				to: '/todos',
 			},
 			{
-				text: "onReveal",
-				to: "/v-on-reveal",
+				text: 'onReveal',
+				to: '/v-on-reveal',
 			},
 			{
-				text: "Fetch API",
-				to: "/fetch-api",
+				text: 'Fetch API',
+				to: '/fetch-api',
+			},
+			{
+				text: 'Vuex',
+				to: '/vuex',
+			},
+			{
+				text: 'ToFormData',
+				to: '/to-form-data',
 			},
 		],
 	}),
-});
+})
 </script>

@@ -1,34 +1,34 @@
 export type OnRevealOptions = {
-	name?: string;
-	once?: boolean;
-	offset?: number;
-	intensity?: number;
-};
+	name?: string
+	once?: boolean
+	offset?: number
+	intensity?: number
+}
 
 export type OnRevealProps = {
-	id?: string;
-	once?: boolean;
-	offset?: number;
-	intensity?: number;
-	onReveal: () => void;
-	onLeave?: () => void;
-};
+	id?: string
+	once?: boolean
+	offset?: number
+	intensity?: number
+	onReveal: () => void
+	onLeave?: () => void
+}
 
 type OnRevealBindting = {
-	value: OnRevealProps;
-};
+	value: OnRevealProps
+}
 
 export const VOnIntersect = {
 	install(Vue: any, options: OnRevealOptions = {}) {
-		const directives = new Map();
-		const { name = "on-intersect" } = options;
+		const directives = new Map()
+		const { name = 'on-intersect' } = options
 
 		Vue.directive(name, {
 			inserted(el: HTMLElement, binding: OnRevealBindting) {
 				const observer = new IntersectionObserver(
 					(entries) => {
 						entries.forEach((entry) => {
-							console.log(entry);
+							console.log(entry)
 							//   if (entry.isIntersecting) {
 							// 	//  let elem = entry.target;
 
@@ -36,33 +36,31 @@ export const VOnIntersect = {
 							// 	// 	intersectionCounter++;
 							// 	//  }
 							//   }
-						});
+						})
 					},
 					{
 						// root: document.querySelector("#scrollArea"),
-						rootMargin: "0px",
+						rootMargin: '0px',
 						threshold: 1.0,
 					}
-				);
-				observer.observe(el);
+				)
+				observer.observe(el)
 			},
 			unbind(_: any, binding: any) {
 				// if (!binding.value) return;
 				// const onScroll = directives.get(binding.value.id);
-
 				// if (!onScroll) return;
-
 				// window.removeEventListener("scroll", onScroll);
 				// directives.delete(binding.value.id);
 			},
-		});
+		})
 	},
-};
+}
 
 export const VOnReveal = {
 	install(Vue: any, options: OnRevealOptions = {}) {
-		const directives = new Map();
-		const { name = "on-reveal" } = options;
+		const directives = new Map()
+		const { name = 'on-reveal' } = options
 
 		Vue.directive(name, {
 			inserted(el: HTMLElement, binding: OnRevealBindting) {
@@ -73,30 +71,30 @@ export const VOnReveal = {
 					once = options.once || false,
 					intensity = options.intensity || 200,
 					id = Math.random().toString(36).substring(2, 9),
-				} = binding.value || {};
+				} = binding.value || {}
 
-				if (typeof onReveal !== "function") {
+				if (typeof onReveal !== 'function') {
 					throw new Error(
 						`v-${name} directive requires a onReveal function`
-					);
+					)
 				}
 
-				let timeout: any;
-				let isInView = false;
-				let isViewed = false;
+				let timeout: any
+				let isInView = false
+				let isViewed = false
 				const onScroll = () => {
-					if (timeout) return;
+					if (timeout) return
 
 					timeout = setTimeout(() => {
-						clearTimeout(timeout);
-						timeout = null;
+						clearTimeout(timeout)
+						timeout = null
 
 						if (once && isViewed) {
-							window.removeEventListener("scroll", onScroll);
-							directives.delete(id);
+							window.removeEventListener('scroll', onScroll)
+							directives.delete(id)
 						}
 
-						const { top, height } = el.getBoundingClientRect();
+						const { top, height } = el.getBoundingClientRect()
 						// top + height // > 0 bottom is in view from bottom
 
 						if (
@@ -104,30 +102,30 @@ export const VOnReveal = {
 							top - window.innerHeight + height > 0 // scrollbar has passed the element
 						) {
 							if (!isInView || (once && !isViewed)) {
-								binding.value.onReveal();
+								binding.value.onReveal()
 							}
 
-							isViewed = true;
-							isInView = true;
+							isViewed = true
+							isInView = true
 						} else {
-							isInView = false;
-							onLeave && onLeave();
+							isInView = false
+							onLeave && onLeave()
 						}
-					}, intensity);
-				};
+					}, intensity)
+				}
 
-				directives.set(id, onScroll);
-				window.addEventListener("scroll", onScroll);
+				directives.set(id, onScroll)
+				window.addEventListener('scroll', onScroll)
 			},
 			unbind(_: any, binding: any) {
-				if (!binding.value) return;
-				const onScroll = directives.get(binding.value.id);
+				if (!binding.value) return
+				const onScroll = directives.get(binding.value.id)
 
-				if (!onScroll) return;
+				if (!onScroll) return
 
-				window.removeEventListener("scroll", onScroll);
-				directives.delete(binding.value.id);
+				window.removeEventListener('scroll', onScroll)
+				directives.delete(binding.value.id)
 			},
-		});
+		})
 	},
-};
+}

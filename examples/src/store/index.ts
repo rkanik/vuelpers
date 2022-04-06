@@ -1,56 +1,51 @@
-import api from '@/api';
+import api from '@/api'
 import Vue from 'vue'
 import Vuex, { createLogger } from 'vuex'
-import { encodedCookies } from "../../../lib";
-import { sleep } from "../../../lib";
+import { encodedCookies } from '../../../lib'
+import { sleep } from '../../../lib'
 import {
-  SET,
-  importModules,
-  handleAction,
-  createGetters,
-  createMutations,
-} from "../../../lib/vuex";
+	SET,
+	importModules,
+	handleAction,
+	createGetters,
+	createMutations,
+} from '../../../lib/vuex'
 
 Vue.use(Vuex)
 
 const modules = importModules(
-  require.context(
-    "./modules", true,
-    /\.store\.(js|ts)$/
-  )
+	require.context('./modules', true, /\.store\.(js|ts)$/)
 )
 
 export default new Vuex.Store({
-  state: {
-    isLoading: false
-  },
-  getters: createGetters('isLoading'),
-  mutations: createMutations(SET),
-  actions: {
-    async initialize({ commit }) {
-      commit(SET, { isLoading: true })
+	state: {
+		isLoading: false,
+	},
+	getters: createGetters('isLoading'),
+	mutations: createMutations(SET),
+	actions: {
+		async initialize({ commit }) {
+			commit(SET, { isLoading: true })
+			await sleep(3, 'sec')
+			commit(SET, { isLoading: false })
+		},
+		async fetchTodos({ commit }) {
+			commit(SET, { isLoading: true })
 
-      await sleep(3, 'sec')
+			console.log(encodedCookies.get('__name__', 'todos'))
 
-      commit(SET, { isLoading: false })
-    },
-    async fetchTodos({ commit }) {
-      commit(SET, { isLoading: true })
+			return handleAction(api.fetchTodos(), (res: any) => {
+				console.log('fetchTodos', res)
 
-      console.log(encodedCookies.get('__name__', 'todos'))
+				encodedCookies.set([
+					{ key: '__name__', value: 'RK Anik' },
+					{ key: 'todos', value: res.data },
+				])
 
-      return handleAction(api.fetchTodos(), (res: any) => {
-        console.log('fetchTodos', res)
-
-        encodedCookies.set([
-          { key: '__name__', value: 'RK Anik' },
-          { key: 'todos', value: res.data },
-        ])
-
-        commit(SET, { isLoading: false })
-      })
-    }
-  },
-  modules,
-  plugins: [createLogger()]
+				commit(SET, { isLoading: false })
+			})
+		},
+	},
+	modules,
+	plugins: [createLogger()],
 })

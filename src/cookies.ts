@@ -12,7 +12,10 @@ interface Cookie {
 export const encodedCookies = {
 	set(cookie: Cookie | Cookie[]) {
 		const set = ({ key, value, expires, secure }: Cookie) => {
-			Cookies.set(key, encodeString(JSON.stringify(value)), { expires, secure })
+			Cookies.set(key, encodeString(JSON.stringify(value)), {
+				expires,
+				secure,
+			})
 		}
 		if (!isArray(cookie)) set(cookie)
 		else cookie.forEach(set)

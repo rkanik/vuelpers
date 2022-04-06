@@ -1,35 +1,51 @@
-import { isMobile } from "./browser";
-import { isPlainObject, isString } from "lodash";
-
+import { isMobile } from './browser'
+import { isPlainObject, isString } from 'lodash'
 
 /**
  *
  * @param {number} time - How much time have to sleep
  * @param {string} unit - Unit of time ['sec'-seconds,'min'-minute,'hr'-hour]
  */
-export const sleep = (time: number = 1000, unit: 'ms' | 'sec' | 'min' | 'hr' = 'ms') => new Promise<any>((resolve) => {
-	const ms = unit === 'sec'
-		? time * 1000 : unit === 'min'
-			? time * 60 * 1000 : unit === 'hr'
-				? time * 60 * 60 * 1000 : time;
-	setTimeout(() => resolve(''), ms);
-});
+export const sleep = (
+	time: number = 1000,
+	unit: 'ms' | 'sec' | 'min' | 'hr' = 'ms'
+) =>
+	new Promise<any>((resolve) => {
+		const ms =
+			unit === 'sec'
+				? time * 1000
+				: unit === 'min'
+				? time * 60 * 1000
+				: unit === 'hr'
+				? time * 60 * 60 * 1000
+				: time
+		setTimeout(() => resolve(''), ms)
+	})
 
 export const isEmpty = (value: any) => {
-	if ([undefined, null, '',].includes(value)) return true
+	if ([undefined, null, ''].includes(value)) return true
 	if (Array.isArray(value) && !value.length) return true
 	if (isPlainObject(value) && !Object.keys(value).length) return true
 	return false
 }
 
-export const getCurrentCountry = (): Promise<[country: { code: string, name: string } | null, error: any]> => {
+export const getCurrentCountry = (): Promise<
+	[country: { code: string; name: string } | null, error: any]
+> => {
 	return new Promise((resolve) => {
-		return fetch("https://ip2c.org/s")
+		return fetch('https://ip2c.org/s')
 			.then((res) => res.text())
 			.then((response) => {
-				let result = (response || "").toString();
-				if (!result || result[0] !== "1") return resolve([null, { message: 'Error while fetching country' }]);
-				return resolve([{ code: result.substring(2, 4), name: result.substring(9) }, null]);
+				let result = (response || '').toString()
+				if (!result || result[0] !== '1')
+					return resolve([
+						null,
+						{ message: 'Error while fetching country' },
+					])
+				return resolve([
+					{ code: result.substring(2, 4), name: result.substring(9) },
+					null,
+				])
 			})
 			.catch((err) => resolve([err, null]))
 	})
@@ -39,12 +55,12 @@ export const jsonParse = (input: string): [error: boolean, parsed: any] => {
 	try {
 		const parsed = JSON.parse(input)
 		return [false, parsed]
+	} catch (_) {
+		return [true, null]
 	}
-	catch (_) { return [true, null] }
 }
 
 export const secureDataType = (input: any) => {
-
 	// Non string
 	if (!isString(input)) return input
 
@@ -54,10 +70,11 @@ export const secureDataType = (input: any) => {
 	if (input === 'undefined') return undefined
 
 	// Possible intended string
-	if (['+', '-'].some(v => input.startsWith(v))) return input
+	if (['+', '-'].some((v) => input.startsWith(v))) return input
 
 	// Possible intended number (without 0.00)
-	if (input.startsWith('0') && input.length > 1 && !input.startsWith('0.')) return input
+	if (input.startsWith('0') && input.length > 1 && !input.startsWith('0.'))
+		return input
 
 	// Json encoded
 	const [parseError, parsedData] = jsonParse(input)
@@ -70,9 +87,24 @@ export const secureDataType = (input: any) => {
 	return converted
 }
 
-interface BreakpointsUp { sm?: number; md?: number; lg?: number; xl?: number; xxl?: number }
-export const calculateBreakpoint = (width: number, breakpoints: BreakpointsUp = {}) => {
-	const { sm = 640, md = 768, lg = 1024, xl = 1280, xxl = 1536 }: BreakpointsUp = breakpoints
+interface BreakpointsUp {
+	sm?: number
+	md?: number
+	lg?: number
+	xl?: number
+	xxl?: number
+}
+export const calculateBreakpoint = (
+	width: number = window.innerWidth,
+	breakpoints: BreakpointsUp = {}
+) => {
+	const {
+		sm = 640,
+		md = 768,
+		lg = 1024,
+		xl = 1280,
+		xxl = 1536,
+	}: BreakpointsUp = breakpoints
 	return {
 		mobile: isMobile(),
 		// EXACT

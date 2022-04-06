@@ -1,5 +1,7 @@
+import { ActionTree } from 'vuex'
+
 const initialState = () => ({
-  loading: false
+	loading: false,
 })
 
 const state = initialState()
@@ -7,14 +9,14 @@ const mutations = {}
 
 const getters = {}
 
-const actions = {
-
+const actions: ActionTree<any, any> = {
+	async initialize({ commit }) {},
 }
 
 export default {
-  state,
-  getters,
-  actions,
-  mutations,
-  namespaced: true
+	state,
+	getters,
+	actions,
+	mutations,
+	namespaced: true,
 }
