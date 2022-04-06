@@ -77,6 +77,10 @@ export const convertKeysToCamelCase = (data: any): any => {
 	if (isArray(data)) {
 		return data.map(nested)
 	}
+	if (isString(data)) return camelCase(data)
+	if (isArray(data)) {
+		return data.map(nested)
+	}
 	if (isPlainObject(data))
 		return Object.entries(data).reduce(
 			(converted: any, [key, value]: any[]) => {
