@@ -1,6 +1,6 @@
 import { ViteGlob, VRef } from './types'
 import { VIA_PLACEHOLDER } from './consts'
-import { camelCase, upperFirst, isFunction } from 'lodash'
+import { camelCase, upperFirst, isFunction, flatten } from 'lodash'
 import { VueConstructor } from 'vue'
 
 /**
@@ -35,26 +35,29 @@ export const registerComponents = (context: any, Vue: any) => {
 /**
  * @example
  * await registerComponentsVite(
+ *    Vue,
  *    import.meta.glob('./components/base/*.vue'),
- *    Vue
+ *    import.meta.glob('./components/custom/*.vue')
  * )
  *
- * @param modules - import.meta.glob
  * @param Vue - Vue instance
+ * @param modules - import.meta.glob
  */
 export const registerComponentsVite = async (
-	modules: ViteGlob,
-	Vue: VueConstructor<Vue>
+	Vue: VueConstructor<Vue>,
+	...modules: ViteGlob[]
 ) => {
 	let i = 0
-	for (const pathName in modules) {
-		const mod = await modules[pathName]()
-		const componentName = pathName
-			.replace(/^\.\/(.*)\.\w+$/, '$1')
-			.split('/')
-			.pop()
-		Vue.component(componentName || `component-${i}`, mod.default || mod)
-		i += 1
+	for (const mods of modules) {
+		for (const pathName in mods) {
+			const mod = await mods[pathName]()
+			const componentName = pathName
+				.replace(/^\.\/(.*)\.\w+$/, '$1')
+				.split('/')
+				.pop()
+			Vue.component(componentName || `component-${i}`, mod.default || mod)
+			i += 1
+		}
 	}
 }
 
