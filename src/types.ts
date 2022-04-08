@@ -1,5 +1,12 @@
 import Vue from 'vue'
 
+export type ViteGlob = Record<
+	string,
+	() => Promise<{
+		[key: string]: any
+	}>
+>
+
 // ========================================================
 // VUEX
 // ========================================================
