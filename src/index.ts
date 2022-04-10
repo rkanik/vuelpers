@@ -15,5 +15,6 @@ export * from './strings'
 export * from './storage'
 export * from './vue'
 export * from './vuex'
+export * from './vite'
 
 export * from './object'
