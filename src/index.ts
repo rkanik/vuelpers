@@ -18,3 +18,4 @@ export * from './vuex'
 export * from './vite'
 
 export * from './object'
+export * from './array'

@@ -99,9 +99,3 @@ export const toFormData = <T = any>(
 	// return formData
 	return formData
 }
-
-console.log(
-	toFormData({
-		firstName: 'John Doe',
-	})
-)
