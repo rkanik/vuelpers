@@ -7,6 +7,7 @@ type Options<T> = {
 	copy?: boolean
 	multiple?: boolean
 	match?: Match<T>
+	replace?: boolean
 }
 
 function extractMatch<T>(v?: Match<T> | Options<T>) {
@@ -30,7 +31,7 @@ function findIndexes<T>(array: T[], item: T, match: Match<T>) {
 
 function deepUpdate<T = any>(
 	array: T[],
-	item: T,
+	item: T | T[],
 	options?: Match<T> | Options<T>
 ): T[] {
 	// Passed input is not an array
@@ -39,24 +40,40 @@ function deepUpdate<T = any>(
 	const match = extractMatch(options)
 	const key: string = get(options, 'key', 'id')
 	const copy: boolean = get(options, 'copy', false)
+	const replace: boolean = get(options, 'replace', false)
 	const multiple: boolean = get(options, 'multiple', false)
 
-	// Find the index of the item to update
-	const indexes = multiple
-		? findIndexes(array, item, match)
-		: [array.findIndex((i) => isSame(i, item, match))]
+	for (const updatedItem of isArray(item) ? item : [item]) {
+		// Find the index of the item to update
+		const indexes = multiple
+			? findIndexes(array, updatedItem, match)
+			: [array.findIndex((i) => isSame(i, updatedItem, match))]
 
-	// item not found
-	if (!indexes.length || indexes[0] === -1) return array
+		// item not found
+		if (!indexes.length || indexes[0] === -1) return array
 
-	// update item at index
-	for (const index of indexes) {
-		const cItem = array[index]
-		set(array, index, { ...cItem, ...item, [key]: get(cItem, key) })
+		// update item at index
+		for (const index of indexes) {
+			// reference to the item to update
+			const currentItem = array[index]
+
+			// copy the item to update
+			const updatedCurrentItem = !replace
+				? { ...currentItem, ...updatedItem }
+				: updatedItem
+
+			// keep the keyProperty same as the original item
+			if (key) {
+				;(updatedCurrentItem as any)[key] = get(currentItem, key)
+			}
+
+			// update the item
+			set(array, index, updatedCurrentItem)
+		}
 	}
 
 	// return updated array
 	return copy ? [...array] : array
 }
 
-export { deepUpdate }
+export { deepUpdate, findIndexes }
