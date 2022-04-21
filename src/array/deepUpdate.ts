@@ -1,4 +1,4 @@
-import { get, set, isArray } from 'lodash'
+import { get, set, isArray, isObject, isFunction } from 'lodash'
 import { Match } from './array.types'
 import { findIndexes } from './findIndexes'
 import { extractMatch, isSame } from './array.helper'
@@ -11,9 +11,11 @@ type Options<T> = {
 	replace?: boolean
 }
 
+type UpdateFn<T> = (item: T) => T
+
 function deepUpdate<T = any>(
 	array: T[],
-	item: T | T[],
+	item: T | T[] | UpdateFn<T> | UpdateFn<T>[],
 	options?: Match<T> | Options<T>
 ): T[] {
 	// Passed input is not an array
@@ -39,14 +41,22 @@ function deepUpdate<T = any>(
 			// reference to the item to update
 			const currentItem = array[index]
 
-			// copy the item to update
-			const updatedCurrentItem = !replace
-				? { ...currentItem, ...updatedItem }
-				: updatedItem
+			let updatedCurrentItem: any
 
-			// keep the keyProperty same as the original item
-			if (key) {
-				;(updatedCurrentItem as any)[key] = get(currentItem, key)
+			if (isFunction(updatedItem)) {
+				updatedCurrentItem = updatedItem(currentItem)
+			} else if (isObject(updatedItem)) {
+				// copy the item to update
+				updatedCurrentItem = !replace
+					? { ...currentItem, ...updatedItem }
+					: updatedItem
+
+				// keep the keyProperty same as the original item
+				if (key) {
+					updatedCurrentItem[key] = get(currentItem, key)
+				}
+			} else {
+				updatedCurrentItem = updatedItem
 			}
 
 			// update the item
@@ -57,5 +67,14 @@ function deepUpdate<T = any>(
 	// return updated array
 	return copy ? [...array] : array
 }
+
+console.log(
+	deepUpdate([1, 1, 2], (v) => v * 5, {
+		multiple: true,
+		match(v: any) {
+			return v === 1
+		},
+	})
+)
 
 export { deepUpdate, findIndexes }
