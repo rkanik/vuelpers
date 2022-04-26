@@ -15,7 +15,7 @@ type UpdateFn<T> = (item: T) => T
 
 function deepUpdate<T = any>(
 	array: T[],
-	item: T | T[] | UpdateFn<T> | UpdateFn<T>[],
+	item: T | UpdateFn<T> | (T | UpdateFn<T>)[],
 	options?: Match<T> | Options<T>
 ): T[] {
 	// Passed input is not an array
@@ -67,14 +67,5 @@ function deepUpdate<T = any>(
 	// return updated array
 	return copy ? [...array] : array
 }
-
-console.log(
-	deepUpdate([1, 1, 2], (v) => v * 5, {
-		multiple: true,
-		match(v: any) {
-			return v === 1
-		},
-	})
-)
 
 export { deepUpdate, findIndexes }

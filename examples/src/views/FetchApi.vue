@@ -28,32 +28,36 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { createAPI } from "../../../lib/axios";
-import { FetchAPI } from "../../../lib/fetch";
+import Vue from 'vue'
+import { createAPI } from '../../../lib/axios'
+import { FetchAPI } from '../../../lib/fetch'
 
 const axios = createAPI({
-	baseURL: "http://localhost:8000/api/v1",
-});
+	baseURL: 'http://localhost:8000/api/v1',
+})
 
 const api = new FetchAPI({
 	// apiCase: "snake_case",
-	baseURL: "http://localhost:8000/api/v1",
-});
+	baseURL: 'http://localhost:8000/api/v1',
+})
 
 export default Vue.extend({
-	name: "FetchAPI",
+	name: 'FetchAPI',
 	data: (): any => ({}),
 	computed: {},
-	async created() {},
+	async created() {
+		const api = new FetchAPI({ baseURL: 'http://dev.zx55.com' })
+		const [err, res] = await api.get(`/info/rb-cr-sc.htm`)
+		console.log(err, res)
+	},
 	methods: {
 		async onFetchGET() {
-			const [axErr, axRes] = await axios.post("/login", {});
-			console.log(axErr.response, axRes);
+			const [axErr, axRes] = await axios.post('/login', {})
+			console.log(axErr.response, axRes)
 
-			const [err, res] = await api.post("/login", {});
-			console.log(err, res);
+			const [err, res] = await api.post('/login', {})
+			console.log(err, res)
 		},
 	},
-});
+})
 </script>

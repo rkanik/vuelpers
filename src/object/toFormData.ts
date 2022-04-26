@@ -53,7 +53,7 @@ export const toFormData = <T = any>(
 		// Recursive call for nested arrays
 		if (isArray(value)) {
 			value.forEach((v: any, index) => {
-				traverse(v, key ? `${key}[]` : index)
+				traverse(v, key ? `${key}[${index}]` : index)
 			})
 			return
 		}
