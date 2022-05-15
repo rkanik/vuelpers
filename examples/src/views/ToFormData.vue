@@ -18,6 +18,8 @@ export default Vue.extend({
 		user: {
 			id: 101,
 			emptyString: '',
+			tags: [1, 2, 3, 4],
+			newTags: ['tag1', 'tag2'],
 			email: 'jack@dev.com',
 			isVerified_Huh: true,
 			iAmNull: null,

@@ -1,0 +1,23 @@
+{
+	"name": "John doe",
+	"age": 25,
+	"greet": "Hello {{name}}. You are {{age}} years old. Your email is {{emails.home}}",
+	"emails": {
+		"home": "john.doe@gmail.com"
+	},
+	"message": {
+		"text": "Hello {{name}}. You are {{age}} years old. Your email is {{emails.home}}"
+	},
+	"nested": {
+		"name": "John doe",
+		"age": 25,
+		"greet": "Hello {{name}}. You are {{age}} years old. Your email is {{emails.home}}",
+		"emails": {
+			"home": ""
+		}
+	},
+	"a": {
+		"b": ["Pineapple", "Banana"],
+		"c": "{{name}} eat {{a.b.0}} and {{a.b.1}}"
+	}
+}
