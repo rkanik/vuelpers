@@ -10,7 +10,6 @@ import {
 	isFunction,
 	isPlainObject,
 } from 'lodash'
-
 export interface LegacyFormDataConfig {
 	convertCase?: TextCase
 }
@@ -90,6 +89,7 @@ export const toFormData = <T = any>(
 			value = value.toISOString()
 		}
 
+		// Append to formData
 		formData.append(key, value)
 	}
 
