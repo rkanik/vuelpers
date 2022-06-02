@@ -17,6 +17,7 @@
 /* eslint-disable */
 import Vue from 'vue'
 import { mapGetters } from 'vuex'
+import { fetch } from '../fetch'
 import {
 	stringReplace,
 	getCurrentCountry,
@@ -53,6 +54,10 @@ export default Vue.extend({
 
 		// let [country] = await getCurrentCountry();
 		// if (country) this.country = country;
+
+		fetch.get('/todos').then((...res) => {
+			console.log('res', res)
+		})
 	},
 	methods: {
 		stringReplace,

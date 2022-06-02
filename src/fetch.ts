@@ -22,6 +22,8 @@ export type FetchResponse = {
 	[key: string]: any
 }
 
+export type FetchListener = (response: [boolean, FetchResponse]) => void
+
 export class FetchAPI {
 	private headers: any
 	private baseURL: string
@@ -29,6 +31,7 @@ export class FetchAPI {
 		mode: 'cors',
 		cache: 'default',
 	}
+	private listeners: FetchListener[] = []
 
 	private config: FetchAPIConfig = {
 		baseURL: '',
@@ -87,6 +90,20 @@ export class FetchAPI {
 			statusText: 'ERR_CONNECTION_REFUSED',
 		}
 		return new Promise((resolve) => {
+			let isResolved = false
+			const onResolve = (data: [boolean, FetchResponse]) => {
+				// Aleady resolved
+				if (isResolved) return
+
+				// Resolve with the response
+				resolve(data)
+
+				// Calling the listeners
+				this.listeners.forEach((listener) => listener(data))
+
+				// Setting resolved to true
+				isResolved = true
+			}
 			return promise
 				.then((raw) => {
 					// Saving the status
@@ -105,7 +122,7 @@ export class FetchAPI {
 						// Still text
 						if (!err && !isObject(errParsed)) {
 							response.message = errParsed
-							return resolve([true, response])
+							return onResolve([true, response])
 						}
 
 						// Error body is plain text
@@ -113,13 +130,13 @@ export class FetchAPI {
 
 						// Erorr body is object
 						response = { ...response, ...errParsed }
-						return resolve([true, response])
+						return onResolve([true, response])
 					})
 				})
 				.then((json) => {
 					if (!isObject(json)) {
 						response.data = json
-						return resolve([false, response])
+						return onResolve([false, response])
 					}
 					// Converting to camelCase if api is in snake_case
 					json = this.ensureCase(json, this.config.response.convertCase)
@@ -131,13 +148,13 @@ export class FetchAPI {
 					}
 
 					// Sending success response
-					return resolve([false, response])
+					return onResolve([false, response])
 				})
 				.catch((err) => {
 					// Sending error response
 					response.ref = () => err
 					response.message = err.message
-					return resolve([true, response])
+					return onResolve([true, response])
 				})
 		})
 	}
@@ -163,6 +180,18 @@ export class FetchAPI {
 			...this.headers,
 			...headers,
 		}
+	}
+
+	public subscribe(listener: FetchListener): () => void {
+		if (!this.listeners.includes(listener)) {
+			this.listeners.push(listener)
+		}
+		return () => this.unsubscribe(listener)
+	}
+
+	public unsubscribe(listener: FetchListener) {
+		const index = this.listeners.indexOf(listener)
+		if (index !== -1) this.listeners.splice(index, 1)
 	}
 
 	public removeHeaders(...keys: string[]) {
