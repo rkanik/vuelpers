@@ -22,7 +22,10 @@ export type FetchResponse = {
 	[key: string]: any
 }
 
-export type FetchListener = (response: [boolean, FetchResponse]) => void
+export type FetchListener = (
+	response: [boolean, FetchResponse],
+	meta?: { [key: string]: any }
+) => void
 
 export class FetchAPI {
 	private headers: any
@@ -82,7 +85,8 @@ export class FetchAPI {
 	}
 
 	private handleFetch(
-		promise: Promise<Response>
+		promise: Promise<Response>,
+		meta?: { [key: string]: any }
 	): Promise<[boolean, FetchResponse]> {
 		let response: FetchResponse = {
 			status: 'net',
@@ -99,7 +103,7 @@ export class FetchAPI {
 				resolve(data)
 
 				// Calling the listeners
-				this.listeners.forEach((listener) => listener(data))
+				this.listeners.forEach((listener) => listener(data, meta))
 
 				// Setting resolved to true
 				isResolved = true
@@ -216,7 +220,8 @@ export class FetchAPI {
 			fetch(input, {
 				headers,
 				method: 'GET',
-			})
+			}),
+			{ input }
 		)
 	}
 
@@ -233,7 +238,8 @@ export class FetchAPI {
 				body,
 				headers,
 				method: 'POST',
-			})
+			}),
+			{ input }
 		)
 	}
 
@@ -250,7 +256,8 @@ export class FetchAPI {
 				body,
 				headers,
 				method: 'PATCH',
-			})
+			}),
+			{ input }
 		)
 	}
 
@@ -267,7 +274,8 @@ export class FetchAPI {
 				body,
 				headers,
 				method: 'PUT',
-			})
+			}),
+			{ input }
 		)
 	}
 
@@ -278,7 +286,8 @@ export class FetchAPI {
 			fetch(input, {
 				headers,
 				method: 'DELETE',
-			})
+			}),
+			{ input }
 		)
 	}
 }

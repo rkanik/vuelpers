@@ -44,8 +44,8 @@ export default Vue.extend({
 		fetch.subscribe(this.onApi)
 	},
 	methods: {
-		onApi(res: any) {
-			console.log('onApi', res)
+		onApi(res: any, meta: any) {
+			console.log('onApi', res, meta)
 		},
 		async onFetchGET() {
 			// const [axErr, axRes] = await axios.post('/login', {})
