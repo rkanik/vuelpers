@@ -2,6 +2,7 @@ import { ViteGlob, VRef } from './types'
 import { VIA_PLACEHOLDER } from './consts'
 import { camelCase, upperFirst, isFunction, flatten } from 'lodash'
 import { VueConstructor } from 'vue'
+import { Route, RouteMeta } from 'vue-router'
 
 /**
  * @example
@@ -68,10 +69,14 @@ export const getVRef = (ref: VRef): [Element | undefined, Vue | undefined] => {
 	return [(eRef as Vue).$el as Element, eRef as Vue]
 }
 
-export const getRouteMeta = (route: any, key: string) => {
-	const matchedRoute = route.matched.find((route: any) => route.meta[key])
-	if (!matchedRoute) return null
-	return matchedRoute.meta[key]
+export const getRouteMeta = <T extends any>(
+	route: Route,
+	key: keyof RouteMeta
+): T | null => {
+	const matchedRoute = route.matched.find((route) => {
+		return Object.prototype.hasOwnProperty.call(route.meta, key)
+	})
+	return matchedRoute ? matchedRoute.meta[key] : null
 }
 
 interface VImgError {
