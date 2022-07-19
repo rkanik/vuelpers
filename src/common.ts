@@ -1,5 +1,24 @@
 import { isMobile } from './browser'
-import { isPlainObject, isString } from 'lodash'
+import { isPlainObject, isString, isArray } from 'lodash'
+
+export const isStrictSame = (value1: any, value2: any): boolean => {
+	if (typeof value1 !== typeof value2) return false
+	if (isArray(value1)) {
+		if (value1.length !== value2.length) return false
+		for (let i = 0; i < value1.length; i++) {
+			if (!isStrictSame(value1[i], value2[i])) {
+				return false
+			}
+		}
+		return true
+	}
+	if (isPlainObject(value1)) {
+		return !Object.keys(value1).some((key) => {
+			return !isStrictSame(value1[key], value2[key])
+		})
+	}
+	return value1 === value2
+}
 
 /**
  *
