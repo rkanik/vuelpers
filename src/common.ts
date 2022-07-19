@@ -1,6 +1,50 @@
 import { isMobile } from './browser'
 import { isPlainObject, isString, isArray } from 'lodash'
 
+export const eachValue = <T, S>(
+	input: T,
+	callback: (
+		value: any,
+		path: string,
+		output: S,
+		done: (output?: S) => void
+	) => void,
+	output?: S
+) => {
+	try {
+		const nextPath = (path: string, key: any) => {
+			return path ? `${path}.${key}` : `${key}`
+		}
+		const done = (value = output) => {
+			output = value
+			throw new Error('eachValue: done called')
+		}
+		const loop = (currentInput: any, cb: any, path = '') => {
+			// output = cb(currentInput, path, output, done)
+
+			if (isPlainObject(currentInput)) {
+				Object.keys(currentInput).forEach((key) => {
+					loop(currentInput[key], cb, nextPath(path, key))
+				})
+			}
+			//
+			else if (isArray(currentInput)) {
+				currentInput.forEach((value, index) => {
+					loop(value, cb, nextPath(path, index))
+				})
+			}
+			//
+			else {
+				output = cb(currentInput, path, output, done)
+			}
+		}
+		loop(input, callback)
+	} catch (_) {
+		return output
+	}
+	return output
+}
+
 export const isStrictSame = (value1: any, value2: any): boolean => {
 	if (typeof value1 !== typeof value2) return false
 	if (isArray(value1)) {
