@@ -246,8 +246,8 @@ export const createMutations = <S>(
 interface CustomGetterTree<S, R> {
 	[key: string]: string | Getter<S, R>
 }
-export const createGetters = <S = unknown, R = unknown>(
-	...keys: (string | CustomGetterTree<S, R>)[]
+export const createGetters = <S = {}, R = unknown>(
+	...keys: (keyof S | CustomGetterTree<S, R>)[]
 ) => {
 	return keys.reduce((getterTree: GetterTree<S, R>, name) => {
 		if (isString(name)) {

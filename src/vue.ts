@@ -83,6 +83,7 @@ interface VImgError {
 	ref: VRef
 	size?: string
 	index?: number
+	base?: string
 }
 
 type RequiredOne<T, Keys extends keyof T = keyof T> = Pick<
@@ -99,6 +100,7 @@ export type ImgErrorConfig = RequiredOne<
 		$event: ErrorEvent
 		size?: string
 		index?: number
+		base?: string
 	},
 	'$event' | 'ref'
 >
@@ -116,7 +118,7 @@ const onVImgError = (config: VImgError) => {
 
 	if (el instanceof HTMLImageElement) {
 		// Set image source
-		el.src = `${VIA_PLACEHOLDER}${size}`
+		el.src = `${config.base || VIA_PLACEHOLDER}${size}`
 	}
 
 	// finding the actual image element
@@ -124,7 +126,7 @@ const onVImgError = (config: VImgError) => {
 	if (!img) return
 
 	img.classList.remove(`v-image__image--preload`)
-	img.style.backgroundImage = `url(${VIA_PLACEHOLDER}${size})`
+	img.style.backgroundImage = `url(${config.base || VIA_PLACEHOLDER}${size})`
 }
 
 export const onImgError = (config: ImgErrorConfig) => {
@@ -133,6 +135,7 @@ export const onImgError = (config: ImgErrorConfig) => {
 			ref: config.ref,
 			index: config.index,
 			size: config.size,
+			base: config.base,
 		})
 
 	// Initialize config
@@ -143,5 +146,16 @@ export const onImgError = (config: ImgErrorConfig) => {
 
 	// replacing the image with placeholder
 	const target = $event.target as HTMLImageElement
-	target.src = `${VIA_PLACEHOLDER}${size}`
+	target.src = `${config.base || VIA_PLACEHOLDER}${size}`
+}
+
+type ImgErrorHandler = {
+	base: string
+}
+export const createImgErrorHandler = ({
+	base = VIA_PLACEHOLDER,
+}: ImgErrorHandler) => {
+	return (config: ImgErrorConfig) => {
+		return onImgError({ ...config, base })
+	}
 }
