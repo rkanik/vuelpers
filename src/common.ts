@@ -1,6 +1,14 @@
 import { isMobile } from './browser'
 import { isPlainObject, isString, isArray } from 'lodash'
 
+export const hasWindow = (): boolean => {
+	try {
+		return typeof window !== 'undefined'
+	} catch (_) {
+		return false
+	}
+}
+
 export const eachValue = <T, S>(
 	input: T,
 	callback: (
@@ -161,7 +169,7 @@ export const calculateBreakpoint = (
 	width?: number,
 	breakpoints: BreakpointsUp = {}
 ) => {
-	width = typeof window !== 'undefined' ? window.innerWidth : 0
+	width = hasWindow() ? window.innerWidth : 0
 	const {
 		sm = 640,
 		md = 768,

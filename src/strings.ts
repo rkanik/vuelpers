@@ -1,3 +1,4 @@
+import { hasWindow } from './common'
 import { AnyRecord } from './types'
 
 type ArrayElement<ArrayType> = ArrayType extends readonly (infer ElementType)[]
@@ -82,7 +83,7 @@ export const stringReplace = (
 
 /** Encode string to base64 */
 export const encodeString = (str: any) => {
-	if (typeof window === 'undefined') return str
+	if (!hasWindow()) return str
 	const _unescape = window.unescape || window.decodeURI
 	try {
 		return window.btoa(_unescape(encodeURIComponent(str)))
@@ -93,7 +94,7 @@ export const encodeString = (str: any) => {
 
 /** Decode base64 to string */
 export const decodeString = (encoded: any) => {
-	if (typeof window === 'undefined') return encoded
+	if (!hasWindow()) return encoded
 	const _escape = window.escape || window.encodeURI
 	try {
 		return decodeURIComponent(_escape(window.atob(encoded)))

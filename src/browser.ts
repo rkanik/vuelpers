@@ -1,3 +1,5 @@
+import { hasWindow } from './common'
+
 const getUserAgent = () => {
 	return typeof navigator === 'undefined'
 		? 'some useragent'
@@ -12,12 +14,12 @@ const getPlatform = (): string => {
 }
 
 export const hasHistory = (): boolean => {
-	if (typeof window === 'undefined') return false
+	if (!hasWindow()) return false
 	return window.history.length > 2
 }
 
 export const changeLocationQuery = (query: string) => {
-	if (typeof window === 'undefined') return
+	if (!hasWindow()) return
 	if (window.history.pushState) {
 		const newurl =
 			window.location.protocol +
