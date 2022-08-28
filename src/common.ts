@@ -158,9 +158,10 @@ interface BreakpointsUp {
 	xxl?: number
 }
 export const calculateBreakpoint = (
-	width: number = window.innerWidth,
+	width?: number,
 	breakpoints: BreakpointsUp = {}
 ) => {
+	width = typeof window !== 'undefined' ? window.innerWidth : 0
 	const {
 		sm = 640,
 		md = 768,

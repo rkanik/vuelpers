@@ -51,6 +51,17 @@ export default Vue.extend({
 			// const [axErr, axRes] = await axios.post('/login', {})
 			// console.log(axErr.response, axRes)
 
+			const axiRes = await createAPI({
+				baseURL: 'http://192.168.31.165:8000',
+				response: {
+					convertCase: 'camelCase',
+				},
+			}).post('/api/create-guest-account', {
+				email: 'guest1@zx.com',
+			})
+
+			console.log({ axiRes })
+
 			const [err, res] = await fetch.post('/login', {})
 			console.log(err, res)
 		},
