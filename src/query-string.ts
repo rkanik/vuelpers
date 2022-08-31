@@ -1,4 +1,4 @@
-import { get, isString } from 'lodash'
+import { get, isString, omit } from 'lodash'
 import { changeLocationQuery } from './browser'
 import { hasWindow } from './common'
 
@@ -18,13 +18,18 @@ export const queryString = {
 		})
 		return params.toString()
 	},
-	set(key: string | { [key: string]: any }, value: any) {
+	set(key: string | { [key: string]: any }, value: any = '') {
 		const params = isString(key) ? { [key]: value } : key
 		return changeLocationQuery(
 			queryString.stringify({
 				...(queryString.parse() || {}),
 				...params,
 			})
+		)
+	},
+	remove(...keys: string[]) {
+		return changeLocationQuery(
+			queryString.stringify(omit(queryString.parse() || {}, ...keys))
 		)
 	},
 }
