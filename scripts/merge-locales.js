@@ -1,6 +1,10 @@
 const fs = require('fs')
 const path = require('path')
-const { set, get, isArray, isPlainObject } = require('lodash')
+
+const get = require('lodash/get')
+const set = require('lodash/set')
+const isArray = require('lodash/isArray')
+const isPlainObject = require('lodash/isPlainObject')
 
 const enJson = require('../locales/en.json')
 const arJson = require('../locales/ar.json')

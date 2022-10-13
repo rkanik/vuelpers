@@ -1,9 +1,5 @@
 {
 	"files.autoSave": "off",
-	"prettier.semi": false,
-	"prettier.tabWidth": 3,
-	"prettier.useTabs": true,
-	"prettier.singleQuote": true,
 	"editor.detectIndentation": false,
 	"typescript.format.semicolons": "remove",
 	"editor.defaultFormatter": "esbenp.prettier-vscode"

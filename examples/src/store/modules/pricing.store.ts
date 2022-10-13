@@ -10,7 +10,9 @@ const mutations = {}
 const getters = {}
 
 const actions: ActionTree<any, any> = {
-	async initialize({ commit }) {},
+	async initialize({ commit }, payload) {
+		console.log('initialize', this, payload)
+	},
 }
 
 export default {

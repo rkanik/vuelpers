@@ -1,6 +1,11 @@
 const fs = require('fs')
 const path = require('path')
-const { set, get, isString, isArray, isPlainObject } = require('lodash')
+
+const get = require('lodash/get')
+const set = require('lodash/set')
+const isArray = require('lodash/isArray')
+const isString = require('lodash/isString')
+const isPlainObject = require('lodash/isPlainObject')
 
 const myArgs = process.argv.slice(2)
 

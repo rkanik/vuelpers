@@ -1,4 +1,6 @@
-import { isArray, isObject } from 'lodash'
+import isArray from 'lodash/isArray'
+import isObject from 'lodash/isObject'
+
 import { Cases } from './types'
 import { jsonParse } from './common'
 import { queryString } from './query-string'

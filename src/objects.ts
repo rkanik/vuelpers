@@ -1,5 +1,10 @@
 import { isEmpty, secureDataType } from './common'
-import { snakeCase, camelCase, isString, isArray, isPlainObject } from 'lodash'
+
+import isArray from 'lodash/isArray'
+import isString from 'lodash/isString'
+import snakeCase from 'lodash/snakeCase'
+import camelCase from 'lodash/camelCase'
+import isPlainObject from 'lodash/isPlainObject'
 
 export const omitProperty = (object: any, ...properties: string[]) => {
 	const traverse = (object: any, path = '') => {

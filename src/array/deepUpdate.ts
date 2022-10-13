@@ -1,4 +1,9 @@
-import { get, set, isArray, isObject, isFunction } from 'lodash'
+import get from 'lodash/get'
+import set from 'lodash/set'
+import isObject from 'lodash/isObject'
+import isArray from 'lodash/isArray'
+import isFunction from 'lodash/isFunction'
+
 import { Match } from './array.types'
 import { findIndexes } from './findIndexes'
 import { extractMatch, isSame } from './array.helper'

@@ -1,5 +1,8 @@
 import { isMobile } from './browser'
-import { isPlainObject, isString, isArray } from 'lodash'
+
+import isArray from 'lodash/isArray'
+import isString from 'lodash/isString'
+import isPlainObject from 'lodash/isPlainObject'
 
 export const hasWindow = (): boolean => {
 	try {
@@ -198,3 +201,75 @@ export const calculateBreakpoint = (
 		xlAndUp: eval(`${width} >= ${xxl}`) as boolean,
 	}
 }
+
+// smoothScrollScrollIntoView(elem, options) {
+//    return new Promise((resolve) => {
+//      if (!(elem instanceof Element)) {
+//        throw new TypeError("Argument 1 must be an Element");
+//      }
+//      let same = 0; // a counter
+//      let lastPos = null; // last known Y position
+//      // pass the user defined options along with our default
+//      const scrollOptions = Object.assign({ behavior: "smooth" }, options);
+
+//      // let's begin
+//      elem.scrollIntoView(scrollOptions);
+//      // window.scrollTop -= 500
+//      requestAnimationFrame(check);
+
+//      // this function will be called every painting frame
+//      // for the duration of the smooth scroll operation
+//      function check() {
+//        // check our current position
+//        const newPos = elem.getBoundingClientRect().top;
+
+//        if (newPos === lastPos) {
+//          // same as previous
+//          if (same++ > 2) {
+//            // if it's more than two frames
+//            /* @todo: verify it succeeded
+//             * if(isAtCorrectPosition(elem, options) {
+//             *   resolve();
+//             * } else {
+//             *   reject();
+//             * }
+//             * return;
+//             */
+//            return resolve(); // we've come to an halt
+//          }
+//        } else {
+//          same = 0; // reset our counter
+//          lastPos = newPos; // remember our current position
+//        }
+//        // check again next painting frame
+//        requestAnimationFrame(check);
+//      }
+//    });
+//  },
+//  smoothScroll(options) {
+//    return new Promise((resolve) => {
+//      // if (!(window instanceof Element)) {
+//      //   throw new TypeError("Argument 1 must be an Element");
+//      // }
+//      let same = 0;
+//      let lastPos = null;
+//      const scrollOptions = Object.assign({ behavior: "smooth" }, options);
+
+//      const check = () => {
+//        // console.log(same, newPos, lastPos, window);
+//        const newPos = window.scrollY;
+//        if (newPos === lastPos) {
+//          if (same++ > 2) {
+//            return resolve();
+//          }
+//        } else {
+//          same = 0;
+//          lastPos = newPos;
+//        }
+//        requestAnimationFrame(check);
+//      };
+
+//      window.scroll(scrollOptions);
+//      requestAnimationFrame(check);
+//    });
+//  },

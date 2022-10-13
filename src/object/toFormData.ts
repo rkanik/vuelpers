@@ -1,15 +1,14 @@
+import isDate from 'lodash/isDate'
+import isArray from 'lodash/isArray'
+import isString from 'lodash/isString'
+import isBoolean from 'lodash/isBoolean'
+import isFunction from 'lodash/isFunction'
+import isPlainObject from 'lodash/isPlainObject'
+
 import { TextCase } from '../types'
 import { ensureCase } from './ensureCase'
 import { HTTPMethod } from '../types/http'
 
-import {
-	isDate,
-	isArray,
-	isString,
-	isBoolean,
-	isFunction,
-	isPlainObject,
-} from 'lodash'
 export interface LegacyFormDataConfig {
 	convertCase?: TextCase
 }

@@ -24,7 +24,8 @@
 		"src/**/*.vue",
 		"tests/**/*.ts",
 		"tests/**/*.tsx",
-		"src/store/modules/index.ts"
+		"src/store/modules/index.ts",
+		"src/store/useVuex.d.ts"
 	],
 	"exclude": ["node_modules"]
 }

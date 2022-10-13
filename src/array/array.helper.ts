@@ -1,4 +1,7 @@
-import { get, isFunction, isString } from 'lodash'
+import get from 'lodash/get'
+import isString from 'lodash/isString'
+import isFunction from 'lodash/isFunction'
+
 import { Match } from './array.types'
 
 function extractMatch<T>(v?: Match<T> | (any & { match: Match<T> })): Match<T> {

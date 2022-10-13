@@ -1,12 +1,11 @@
-import {
-	get,
-	set,
-	camelCase,
-	isArray,
-	isFunction,
-	isPlainObject,
-	isString,
-} from 'lodash'
+import get from 'lodash/get'
+import set from 'lodash/set'
+import camelCase from 'lodash/camelCase'
+import isArray from 'lodash/isArray'
+import isFunction from 'lodash/isFunction'
+import isPlainObject from 'lodash/isPlainObject'
+import isString from 'lodash/isString'
+
 import { FetchResponse } from './fetch'
 
 export type Getter<S, R> = (

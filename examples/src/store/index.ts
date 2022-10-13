@@ -1,6 +1,6 @@
 import api from '@/api'
 import Vue from 'vue'
-import Vuex, { createLogger } from 'vuex'
+import Vuex, { createLogger, useVuex } from './useVuex'
 import { encodedCookies } from '../../../lib'
 import { sleep } from '../../../lib'
 import {
@@ -17,17 +17,21 @@ const modules = importModules(
 	require.context('./modules', true, /\.store\.(js|ts)$/)
 )
 
-export default new Vuex.Store({
+const store = useVuex({
 	state: {
 		isLoading: false,
 	},
 	getters: createGetters('isLoading'),
 	mutations: createMutations(SET),
 	actions: {
-		async initialize({ commit }) {
-			commit(SET, { isLoading: true })
+		async initialize(ctx) {
+			ctx.setState({ isLoading: true })
+
+			console.log('initialize', this)
+
+			// commit(SET, { isLoading: true })
 			await sleep(3, 'sec')
-			commit(SET, { isLoading: false })
+			ctx.commit(SET, { isLoading: false })
 		},
 		async fetchTodos({ commit }) {
 			commit(SET, { isLoading: true })
@@ -49,3 +53,7 @@ export default new Vuex.Store({
 	modules,
 	plugins: [createLogger()],
 })
+
+console.log(store)
+
+export default new Vuex.Store(store)

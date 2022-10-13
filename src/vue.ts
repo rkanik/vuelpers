@@ -1,6 +1,9 @@
+import camelCase from 'lodash/camelCase'
+import upperFirst from 'lodash/upperFirst'
+import isFunction from 'lodash/isFunction'
+
 import { ViteGlob, VRef } from './types'
 import { VIA_PLACEHOLDER } from './consts'
-import { camelCase, upperFirst, isFunction, flatten } from 'lodash'
 import { VueConstructor } from 'vue'
 import { Route, RouteMeta } from 'vue-router'
 

@@ -1,39 +1,43 @@
-import axios from "axios";
-import { AxiosRequestConfig } from "axios";
-import { has, isArray, isPlainObject } from "lodash";
-import { convertKeysToCamelCase, convertKeysToSnakeCase } from "./objects";
-import { Cases } from "./types";
+import axios from 'axios'
+import { AxiosRequestConfig } from 'axios'
+
+import has from 'lodash/has'
+import isArray from 'lodash/isArray'
+import isPlainObject from 'lodash/isPlainObject'
+
+import { convertKeysToCamelCase, convertKeysToSnakeCase } from './objects'
+import { Cases } from './types'
 
 const ensureCase = (data: any, caseType: Cases) => {
-	if (caseType === "camelCase") return convertKeysToCamelCase(data);
-	if (caseType === "snake_case") return convertKeysToSnakeCase(data);
-	return data;
-};
+	if (caseType === 'camelCase') return convertKeysToCamelCase(data)
+	if (caseType === 'snake_case') return convertKeysToSnakeCase(data)
+	return data
+}
 
 const toSuccess = (res: any) => {
-	if (isPlainObject(res) && res.status === "error") return toError(res);
-	let mRes = isArray(res) ? { data: res } : { ...res };
-	delete mRes.code;
-	delete mRes.status;
+	if (isPlainObject(res) && res.status === 'error') return toError(res)
+	let mRes = isArray(res) ? { data: res } : { ...res }
+	delete mRes.code
+	delete mRes.status
 	let data = {
 		...mRes,
 		statusCode: res.code,
 		statusText: res.status,
-		message: res.message || "Request succeeded",
-	};
-	return data;
-};
+		message: res.message || 'Request succeeded',
+	}
+	return data
+}
 
 const toError = (error: any) => {
 	try {
-		let data: any = {};
+		let data: any = {}
 		if (error.response) {
-			const res = error.response;
+			const res = error.response
 			data = {
 				...res,
 				statusCode: res.status,
 				statusText: res.statusText || res.data.status,
-			};
+			}
 			if (res.data.errors)
 				data.errors = Object.entries(res.data.errors).reduce(
 					(acc, [key, value]) => ({
@@ -41,21 +45,21 @@ const toError = (error: any) => {
 						[key]: value,
 					}),
 					{}
-				);
-			data.message = res.data.message || res.message;
-			data.ref = error.response;
+				)
+			data.message = res.data.message || res.message
+			data.ref = error.response
 		} else {
-			data.statusCode = error.status;
-			data.statusText = error.statusText;
-			data.message = error.data.message;
-			if (error.data.errors) data.errors = error.data.errors;
+			data.statusCode = error.status
+			data.statusText = error.statusText
+			data.message = error.data.message
+			if (error.data.errors) data.errors = error.data.errors
 		}
-		data.message = data.message || error.message;
-		return data;
+		data.message = data.message || error.message
+		return data
 	} catch (_) {
-		return error;
+		return error
 	}
-};
+}
 
 const handler = (
 	requestPromise: Promise<any>,
@@ -70,23 +74,23 @@ const handler = (
 				resolve([
 					ensureCase(toError(error.response || error), caseType),
 					null,
-				]);
-			});
-	});
-};
+				])
+			})
+	})
+}
 
 type AxiosMiddleware = (
 	config: AxiosRequestConfig<any>
-) => AxiosRequestConfig<any>;
+) => AxiosRequestConfig<any>
 
 interface APIConfig {
-	baseURL: string;
+	baseURL: string
 	response?: {
-		convertCase?: Cases;
-	};
+		convertCase?: Cases
+	}
 	request?: {
-		convertCase?: Cases;
-	};
+		convertCase?: Cases
+	}
 }
 
 export const createAPI = (config: APIConfig) => {
@@ -99,40 +103,40 @@ export const createAPI = (config: APIConfig) => {
 			convertCase: null,
 		},
 		...config,
-	};
+	}
 
 	// AXIOS INSTANCE
 	const api = axios.create({
 		baseURL: mConfig.baseURL,
-	});
+	})
 
 	// MIDDLEWARES
-	let middlewares: AxiosMiddleware[] = [];
+	let middlewares: AxiosMiddleware[] = []
 
 	// REQUEST MIDDLEWARE
 	api.interceptors.request.use((conf) => {
 		for (let middleware of middlewares) {
-			conf = { ...middleware(conf) };
+			conf = { ...middleware(conf) }
 		}
-		return conf;
-	});
+		return conf
+	})
 
 	return {
 		instance: api,
 		use(middleware: AxiosMiddleware) {
-			middlewares.push(middleware);
-			return this;
+			middlewares.push(middleware)
+			return this
 		},
 		setHeaders(headers: object) {
 			api.defaults.headers.common = {
 				...api.defaults.headers.common,
 				...headers,
-			};
+			}
 		},
 		removeHeaders(...headers: string[]) {
 			for (let key of headers) {
 				if (has(api.defaults.headers.common, key)) {
-					delete api.defaults.headers.common[key];
+					delete api.defaults.headers.common[key]
 				}
 			}
 		},
@@ -142,7 +146,7 @@ export const createAPI = (config: APIConfig) => {
 					params: ensureCase(query, config.request?.convertCase),
 				}),
 				config.response?.convertCase
-			);
+			)
 		},
 		post(endpoint: string, body: object, query = {}) {
 			return handler(
@@ -150,7 +154,7 @@ export const createAPI = (config: APIConfig) => {
 					params: ensureCase(query, config.request?.convertCase),
 				}),
 				config.response?.convertCase
-			);
+			)
 		},
 		put(endpoint: string, body: object, query = {}) {
 			return handler(
@@ -158,7 +162,7 @@ export const createAPI = (config: APIConfig) => {
 					params: ensureCase(query, config.request?.convertCase),
 				}),
 				config.response?.convertCase
-			);
+			)
 		},
 		patch(endpoint: string, body: object, query = {}) {
 			return handler(
@@ -166,10 +170,10 @@ export const createAPI = (config: APIConfig) => {
 					params: ensureCase(query, config.request?.convertCase),
 				}),
 				config.response?.convertCase
-			);
+			)
 		},
 		delete(endpoint: string) {
-			return handler(api.delete(endpoint), config.response?.convertCase);
+			return handler(api.delete(endpoint), config.response?.convertCase)
 		},
-	};
-};
+	}
+}

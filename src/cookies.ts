@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
-import { isArray } from 'lodash'
+import isArray from 'lodash/isArray'
+
 import { secureDataType } from './common'
 import { encodeString, decodeString } from './strings'
 
