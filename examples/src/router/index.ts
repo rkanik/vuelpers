@@ -27,6 +27,12 @@ const routes: Array<RouteConfig> = [
 			import(/* webpackChunkName: "fetch-api" */ '../views/FetchApi.vue'),
 	},
 	{
+		path: '/animated',
+		name: 'Animated',
+		component: () =>
+			import(/* webpackChunkName: "fetch-api" */ '../views/Animated.vue'),
+	},
+	{
 		path: '/todos',
 		name: 'Todos',
 		component: () =>
