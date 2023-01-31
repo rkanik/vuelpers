@@ -134,9 +134,9 @@ export const jsonParse = (input: string): [error: boolean, parsed: any] => {
 	}
 }
 
-export const secureDataType = (input: any) => {
+export const secureDataType = (input: any): any => {
 	// Non string
-	if (!isString(input)) return input
+	if (typeof input !== 'string') return input
 
 	// Empty string
 	if (!input.length) return input
@@ -152,7 +152,7 @@ export const secureDataType = (input: any) => {
 
 	// Json encoded
 	const [parseError, parsedData] = jsonParse(input)
-	if (!parseError) return parsedData
+	if (!parseError) return secureDataType(parsedData)
 
 	// try to convert
 	const converted = +input

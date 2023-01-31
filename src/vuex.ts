@@ -39,7 +39,8 @@ export interface Pagination<T> {
 	isRefetching: boolean
 	data: T[]
 }
-export const createPaginaion = <T = unknown>(
+
+export const createPagination = <T = unknown>(
 	config: Partial<Pagination<T>> = {}
 ) => {
 	return {
@@ -55,6 +56,11 @@ export const createPaginaion = <T = unknown>(
 		...config,
 	} as Pagination<T>
 }
+
+/**
+ * @deprecated - Spelling mistake, use createPagination instead
+ */
+export const createPaginaion = createPagination
 
 /**
  * @example

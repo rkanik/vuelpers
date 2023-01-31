@@ -79,13 +79,7 @@ export const convertKeysToCamelCase = (data: any): any => {
 			: secureDataType(b)
 	}
 	if (isString(data)) return camelCase(data)
-	if (isArray(data)) {
-		return data.map(nested)
-	}
-	if (isString(data)) return camelCase(data)
-	if (isArray(data)) {
-		return data.map(nested)
-	}
+	if (isArray(data)) return data.map(nested)
 	if (isPlainObject(data))
 		return Object.entries(data).reduce(
 			(converted: any, [key, value]: any[]) => {

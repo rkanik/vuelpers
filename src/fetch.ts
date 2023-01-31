@@ -13,6 +13,7 @@ type FetchAPIConfig = {
 	}
 	request: {
 		convertCase: Cases
+		beforeEach: (config: RequestInit) => RequestInit
 	}
 }
 
@@ -42,6 +43,7 @@ export class FetchAPI {
 		baseURL: '',
 		request: {
 			convertCase: null,
+			beforeEach: (config) => config,
 		},
 		response: {
 			convertCase: null,
@@ -206,7 +208,7 @@ export class FetchAPI {
 		})
 	}
 
-	public toCallback = async (
+	public next = async (
 		request: Promise<[boolean, FetchResponse]>,
 		callback?: (res: [boolean, FetchResponse]) => void
 	) => {
@@ -215,14 +217,19 @@ export class FetchAPI {
 		return res
 	}
 
+	public toCallback = this.next
+
 	public get(endpoint: string, query?: object) {
 		const input = this.getUrl(endpoint, query)
 		const headers = this.getHeaders()
 		return this.handleFetch(
-			fetch(input, {
-				headers,
-				method: 'GET',
-			}),
+			fetch(
+				input,
+				this.config.request.beforeEach({
+					headers,
+					method: 'GET',
+				})
+			),
 			{ input }
 		)
 	}
@@ -236,11 +243,14 @@ export class FetchAPI {
 			headers.append('Content-Type', 'application/json')
 		}
 		return this.handleFetch(
-			fetch(input, {
-				body,
-				headers,
-				method: 'POST',
-			}),
+			fetch(
+				input,
+				this.config.request.beforeEach({
+					body,
+					headers,
+					method: 'POST',
+				})
+			),
 			{ input }
 		)
 	}
@@ -254,11 +264,14 @@ export class FetchAPI {
 			headers.append('Content-Type', 'application/json')
 		}
 		return this.handleFetch(
-			fetch(input, {
-				body,
-				headers,
-				method: 'PATCH',
-			}),
+			fetch(
+				input,
+				this.config.request.beforeEach({
+					body,
+					headers,
+					method: 'PATCH',
+				})
+			),
 			{ input }
 		)
 	}
@@ -272,11 +285,14 @@ export class FetchAPI {
 			headers.append('Content-Type', 'application/json')
 		}
 		return this.handleFetch(
-			fetch(input, {
-				body,
-				headers,
-				method: 'PUT',
-			}),
+			fetch(
+				input,
+				this.config.request.beforeEach({
+					body,
+					headers,
+					method: 'PUT',
+				})
+			),
 			{ input }
 		)
 	}
@@ -285,10 +301,13 @@ export class FetchAPI {
 		const input = this.getUrl(endpoint)
 		const headers = this.getHeaders()
 		return this.handleFetch(
-			fetch(input, {
-				headers,
-				method: 'DELETE',
-			}),
+			fetch(
+				input,
+				this.config.request.beforeEach({
+					headers,
+					method: 'DELETE',
+				})
+			),
 			{ input }
 		)
 	}
