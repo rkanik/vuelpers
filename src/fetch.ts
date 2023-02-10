@@ -55,14 +55,17 @@ export class FetchAPI {
 
 		// CONFIG
 		this.config = {
-			...this.config,
 			baseURL: config.baseURL || this.config.baseURL,
-		}
-		if (config.request && config.request.convertCase) {
-			this.config.request.convertCase = config.request.convertCase
-		}
-		if (config.response && config.response.convertCase) {
-			this.config.response.convertCase = config.response.convertCase
+			request: {
+				convertCase:
+					config.request?.convertCase || this.config.request.convertCase,
+				beforeEach:
+					config.request?.beforeEach || this.config.request.beforeEach,
+			},
+			response: {
+				convertCase:
+					config.response?.convertCase || this.config.response.convertCase,
+			},
 		}
 
 		if (init) this.init = { ...this.init, ...init }
@@ -210,14 +213,29 @@ export class FetchAPI {
 
 	public next = async (
 		request: Promise<[boolean, FetchResponse]>,
+		onSuccess?: (res: FetchResponse) => void | Promise<void>,
+		onError?: (error: any) => void | Promise<void>
+	): Promise<[boolean, FetchResponse]> => {
+		const [err, res] = await request
+
+		if (!err && onSuccess) await onSuccess(res)
+		if (err && onError) await onError(err)
+
+		return [err, res]
+	}
+
+	/**
+	 *
+	 * @deprecated use next instead
+	 */
+	public toCallback = async (
+		request: Promise<[boolean, FetchResponse]>,
 		callback?: (res: [boolean, FetchResponse]) => void
 	) => {
 		const res = await request
 		if (callback) callback(res)
 		return res
 	}
-
-	public toCallback = this.next
 
 	public get(endpoint: string, query?: object) {
 		const input = this.getUrl(endpoint, query)
